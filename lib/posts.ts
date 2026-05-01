@@ -15,7 +15,7 @@ export async function getPublishedPosts(params?: { category?: string; tag?: stri
       .select("post_id, categories!inner(slug)")
       .eq("categories.slug", params.category);
     categoryPostIds = (cats ?? []).map((r: any) => r.post_id);
-    if (categoryPostIds.length === 0) return [];
+    if (categoryPostIds?.length === 0) return [];
   }
 
   // Resolve post IDs for tag filter
@@ -26,7 +26,7 @@ export async function getPublishedPosts(params?: { category?: string; tag?: stri
       .select("post_id, tags!inner(slug)")
       .eq("tags.slug", params.tag);
     tagPostIds = (tags ?? []).map((r: any) => r.post_id);
-    if (tagPostIds.length === 0) return [];
+    if (tagPostIds?.length === 0) return [];
   }
 
   let query = supabase
