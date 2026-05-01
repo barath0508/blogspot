@@ -6,7 +6,7 @@ import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 const SITE_NAME = "Tech & Trends";
 const SITE_DESCRIPTION = "Your daily source for AI-powered insights on technology, digital growth, and trending innovations.";
 

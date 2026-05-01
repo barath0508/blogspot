@@ -4,7 +4,7 @@ import { getSupabase } from "@/lib/supabase";
 export const revalidate = 300;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
   const supabase = getSupabase();
 
   const { data: posts } = await supabase

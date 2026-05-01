@@ -9,7 +9,7 @@ import { LikeButton } from "@/components/LikeButton";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 const SITE_NAME = "Tech & Trends";
 
 type Props = { params: Promise<{ slug: string }> };

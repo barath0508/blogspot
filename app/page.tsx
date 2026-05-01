@@ -6,7 +6,7 @@ import { getSupabase } from "@/lib/supabase";
 
 export const revalidate = 120;
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 
 export async function generateMetadata(): Promise<Metadata> {
   const posts = await getPublishedPosts();
