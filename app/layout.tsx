@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
 import Link from "next/link";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
 const SITE_NAME = "Tech & Trends";
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#fafafa] text-gray-900`}>
+      <body className={`${jakarta.className} bg-[#fafafa] text-gray-900`}>
         <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/70 backdrop-blur-xl shadow-sm">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
             <Link href="/" className="group flex items-center gap-2.5 font-bold text-gray-900 tracking-tight text-lg">
