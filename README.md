@@ -77,5 +77,5 @@ This project includes an auto-publish workflow:
 ### Test manually
 
 ```bash
-curl -H "Authorization: Bearer YOUR_SECRET" http://localhost:3000/api/automation/publish
+curl -H "Authorization: Bearer YOUR_SECRET" https://blogspot-phi.vercel.app/api/automation/publish
 ```
