@@ -10,7 +10,7 @@ import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com").replace(/\/$/, "");
-const SITE_NAME = "Minimal Blog";
+const SITE_NAME = "Tech & Trends";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -96,8 +96,8 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-purple-600 transition-colors group">
+          <svg className="h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
           Back to all posts
@@ -109,7 +109,7 @@ export default async function BlogPostPage({ params }: Props) {
           {post.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.slice(0, 4).map((tag) => (
-                <span key={tag.slug} className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                <span key={tag.slug} className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100">
                   #{tag.name}
                 </span>
               ))}
