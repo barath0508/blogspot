@@ -8,25 +8,25 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/admin",
-          "/admin/",
-          "/api/",
-          "/login",
-          "/*?category=",
-          "/*?tag=",
-          "/*?q="
-        ]
+        disallow: ["/admin", "/admin/", "/api/", "/login"]
       },
       {
         userAgent: "Googlebot",
-        allow: "/",
-        disallow: ["/admin", "/api/", "/login"]
+        allow: ["/", "/blog/", "/?category=", "/?tag="],
+        disallow: ["/admin", "/api/", "/login", "/?q="]
       },
       {
         userAgent: "Bingbot",
-        allow: "/",
-        disallow: ["/admin", "/api/", "/login"]
+        allow: ["/", "/blog/", "/?category=", "/?tag="],
+        disallow: ["/admin", "/api/", "/login", "/?q="]
+      },
+      {
+        userAgent: "GPTBot",
+        disallow: ["/"]
+      },
+      {
+        userAgent: "CCBot",
+        disallow: ["/"]
       }
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

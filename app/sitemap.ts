@@ -17,12 +17,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     supabase.from("tags").select("slug,updated_at")
   ]);
 
-  const postEntries: MetadataRoute.Sitemap = (posts ?? []).map((post: any) => ({
-    url: `${base}/blog/${post.slug}`,
-    lastModified: new Date(post.updated_at ?? post.published_at),
-    changeFrequency: "weekly" as const,
-    priority: 0.9
-  }));
+  const postEntries: MetadataRoute.Sitemap = (posts ?? []).map((post: any) => {
+    const publishedAt = post.published_at ? new Date(post.published_at) : new Date();
+    const ageInDays = (Date.now() - publishedAt.getTime()) / 86_400_000;
+    return {
+      url: `${base}/blog/${post.slug}`,
+      lastModified: new Date(post.updated_at ?? post.published_at),
+      changeFrequency: ageInDays < 7 ? ("daily" as const) : ("weekly" as const),
+      priority: ageInDays < 1 ? 1.0 : ageInDays < 7 ? 0.9 : 0.8
+    };
+  });
 
   const categoryEntries: MetadataRoute.Sitemap = (categories ?? []).map((cat: any) => ({
     url: `${base}/?category=${cat.slug}`,

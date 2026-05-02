@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import { FilterBar } from "@/components/FilterBar";
 import { PostCard } from "@/components/PostCard";
 import { SearchBar } from "@/components/SearchBar";
@@ -10,15 +11,27 @@ import { getSupabase } from "@/lib/supabase";
 export const revalidate = 60;
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_NAME = "Insight Daily";
 
 export async function generateMetadata(): Promise<Metadata> {
   const posts = await getPublishedPosts();
   const latest = posts[0];
+  const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
   return {
-    alternates: { canonical: SITE_URL },
+    alternates: {
+      canonical: SITE_URL,
+      types: { "application/rss+xml": `${SITE_URL}/feed.xml` }
+    },
     openGraph: {
       url: SITE_URL,
-      images: latest?.cover_image ? [{ url: latest.cover_image, width: 1600, height: 900 }] : undefined
+      type: "website",
+      locale: "en_US",
+      siteName: SITE_NAME,
+      title: `${SITE_NAME} — Technology, AI & Ideas`,
+      description: SITE_DESCRIPTION,
+      images: latest?.cover_image
+        ? [{ url: latest.cover_image, width: 1600, height: 900, alt: latest.title }]
+        : undefined
     }
   };
 }
@@ -38,8 +51,27 @@ export default async function Home({
   const featuredPost = !isFiltered ? posts[0] : null;
   const gridPosts = featuredPost ? posts.slice(1) : posts;
 
+  const itemListJsonLd = !isFiltered && posts.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Latest articles on ${SITE_NAME}`,
+    url: SITE_URL,
+    numberOfItems: posts.length,
+    itemListElement: posts.slice(0, 10).map((post, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      name: post.title,
+      image: post.cover_image ?? undefined,
+      description: post.excerpt
+    }))
+  } : null;
+
   return (
     <div className="space-y-10">
+      {itemListJsonLd && (
+        <Script id="itemlist-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      )}
       {/* ── Hero Section ── */}
       {!isFiltered && (
         <section className="animate-fade-up space-y-6 py-10 lg:py-14 text-center flex flex-col items-center">

@@ -31,28 +31,54 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: "Post not found" };
   const url = `${SITE_URL}/blog/${post.slug}`;
   const image = post.cover_image ?? undefined;
+  const title = post.meta_title || post.title;
+  const description = post.meta_description || post.excerpt;
+  const category = post.categories?.[0]?.name;
   return {
-    title: post.meta_title || post.title,
-    description: post.meta_description || post.excerpt,
+    title,
+    description,
     keywords: post.seo_keywords,
     authors: [{ name: SITE_NAME, url: SITE_URL }],
-    alternates: { canonical: url },
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    category: category ?? "Technology",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1
+      }
+    },
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": `${SITE_URL}/feed.xml` }
+    },
     openGraph: {
-      title: post.meta_title || post.title,
-      description: post.meta_description || post.excerpt,
+      title,
+      description,
       url,
       siteName: SITE_NAME,
       type: "article",
       publishedTime: post.published_at ?? undefined,
       modifiedTime: post.updated_at ?? undefined,
+      section: category,
       tags: post.seo_keywords,
-      images: image ? [{ url: image, alt: post.title, width: 1600, height: 900 }] : undefined
+      locale: "en_US",
+      images: image
+        ? [{ url: image, alt: title, width: 1600, height: 900, type: "image/jpeg" }]
+        : undefined
     },
     twitter: {
       card: "summary_large_image",
-      title: post.meta_title || post.title,
-      description: post.meta_description || post.excerpt,
-      images: image ? [image] : undefined
+      title,
+      description,
+      site: "@insightdaily",
+      creator: "@insightdaily",
+      images: image ? [{ url: image, alt: title }] : undefined
     }
   };
 }
@@ -88,41 +114,56 @@ export default async function BlogPostPage({ params }: Props) {
     ? new Date(post.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
     : "Draft";
 
+  const category = post.categories?.[0];
   const articleJsonLd = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.meta_title || post.title,
-    description: post.meta_description || post.excerpt,
-    image: post.cover_image ? {
-      "@type": "ImageObject",
-      url: post.cover_image,
-      width: 1600,
-      height: 900
-    } : undefined,
-    url: postUrl,
-    datePublished: post.published_at ?? post.created_at,
-    dateModified: post.updated_at ?? post.published_at ?? post.created_at,
-    author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 }
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
-    keywords: post.seo_keywords.join(", "),
-    wordCount,
-    timeRequired: `PT${readTime}M`,
-    inLanguage: "en-US",
-    isAccessibleForFree: true
-  };
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: post.title, item: postUrl }
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${postUrl}/#article`,
+        headline: post.meta_title || post.title,
+        name: post.title,
+        description: post.meta_description || post.excerpt,
+        articleBody: post.content,
+        articleSection: category?.name ?? "Technology",
+        wordCount,
+        timeRequired: `PT${readTime}M`,
+        inLanguage: "en-US",
+        isAccessibleForFree: true,
+        url: postUrl,
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        datePublished: post.published_at ?? post.created_at,
+        dateModified: post.updated_at ?? post.published_at ?? post.created_at,
+        image: post.cover_image
+          ? { "@type": "ImageObject", "@id": `${postUrl}/#primaryimage`, url: post.cover_image, width: 1600, height: 900, caption: post.title }
+          : undefined,
+        thumbnailUrl: post.cover_image ?? undefined,
+        keywords: post.seo_keywords.join(", "),
+        about: post.seo_keywords.slice(0, 5).map((k) => ({ "@type": "Thing", name: k })),
+        speakable: { "@type": "SpeakableSpecification", cssSelector: ["h1", ".prose h2", ".prose p:first-of-type"] },
+        author: {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: SITE_NAME,
+          url: SITE_URL
+        },
+        publisher: {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 }
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${postUrl}/#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          ...(category ? [{ "@type": "ListItem", position: 2, name: category.name, item: `${SITE_URL}/?category=${category.slug}` }] : []),
+          { "@type": "ListItem", position: category ? 3 : 2, name: post.title, item: postUrl }
+        ]
+      }
     ]
   };
 
@@ -131,18 +172,25 @@ export default async function BlogPostPage({ params }: Props) {
       <ReadingProgress />
 
       <Script id="article-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      <Script id="breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       {/* ── Breadcrumb ── */}
       <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-400">
-        <Link href="/" className="hover:text-purple-600 transition-colors font-medium flex items-center gap-1.5 group">
+        <Link href="/" className="hover:text-indigo-600 transition-colors font-medium flex items-center gap-1.5 group">
           <svg className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
           Home
         </Link>
-        <span>/</span>
-        <span className="text-gray-600 line-clamp-1 font-medium">{post.title}</span>
+        {category && (
+          <>
+            <span aria-hidden="true">/</span>
+            <Link href={`/?category=${category.slug}`} className="hover:text-indigo-600 transition-colors font-medium">
+              {category.name}
+            </Link>
+          </>
+        )}
+        <span aria-hidden="true">/</span>
+        <span className="text-gray-600 line-clamp-1 font-medium" aria-current="page">{post.title}</span>
       </nav>
 
       <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 xl:gap-24 items-start">

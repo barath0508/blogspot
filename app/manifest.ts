@@ -4,9 +4,9 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.verc
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Tech & Trends",
-    short_name: "TechTrends",
-    description: "Your daily source for AI-powered insights on technology, digital growth, and trending innovations.",
+    name: "Insight Daily",
+    short_name: "InsightDaily",
+    description: "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.",
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",
