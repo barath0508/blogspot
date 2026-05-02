@@ -122,3 +122,17 @@ drop policy if exists "Public can insert likes" on post_likes;
 create policy "Public can insert likes"
 on post_likes for insert
 with check (char_length(visitor_id) > 5);
+
+-- Newsletter Subscribers
+create table if not exists subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table subscribers enable row level security;
+
+drop policy if exists "Public can insert subscribers" on subscribers;
+create policy "Public can insert subscribers"
+on subscribers for insert
+with check (char_length(email) > 3);

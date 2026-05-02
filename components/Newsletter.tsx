@@ -6,16 +6,32 @@ export function Newsletter() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [email, setEmail] = useState("");
 
-  const subscribe = (e: React.FormEvent) => {
+  const subscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     
     setStatus("loading");
-    // Simulate API call
-    setTimeout(() => {
-      setStatus("success");
-      setEmail("");
-    }, 1000);
+    
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        // If it fails, revert to idle so they can try again
+        setStatus("idle");
+        alert("Failed to subscribe. Please try again later.");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+      alert("Network error. Please try again.");
+    }
   };
 
   return (
