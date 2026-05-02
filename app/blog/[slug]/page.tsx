@@ -206,8 +206,8 @@ export default async function BlogPostPage({ params }: Props) {
               img: ({ src, alt }) => (
                 <span className="block relative w-full aspect-video my-6">
                   <Image
-                    src={src ?? ""}
-                    alt={alt ?? ""}
+                    src={String(src ?? "")}
+                    alt={String(alt ?? "")}
                     fill
                     unoptimized
                     className="rounded-2xl object-cover border border-gray-100 shadow-sm"
