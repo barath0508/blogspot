@@ -64,6 +64,44 @@ async function fetchTrendingTopic() {
   return titles[0];
 }
 
+function extractAndRepairJson(raw: string): unknown {
+  // 1. Strip markdown code fences
+  let text = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  // 2. Remove ASCII control characters except tab (\x09), LF (\x0A), CR (\x0D)
+  text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+
+  // 3. Try direct parse first
+  try { return JSON.parse(text); } catch { /* fall through */ }
+
+  // 4. Extract outermost { ... } block
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start !== -1 && end > start) {
+    text = text.slice(start, end + 1);
+    try { return JSON.parse(text); } catch { /* fall through */ }
+  }
+
+  // 5. Surgically escape bare newlines / carriage returns inside JSON string values
+  let result = "";
+  let inString = false;
+  let escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (escaped) { result += ch; escaped = false; continue; }
+    if (ch === "\\") { result += ch; escaped = true; continue; }
+    if (ch === '"') { inString = !inString; result += ch; continue; }
+    if (inString) {
+      if (ch === "\n") { result += "\\n"; continue; }
+      if (ch === "\r") { result += "\\r"; continue; }
+      if (ch === "\t") { result += "\\t"; continue; }
+    }
+    result += ch;
+  }
+
+  return JSON.parse(result);
+}
+
 async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY is missing");
@@ -134,9 +172,7 @@ Constraints:
     throw new Error(`Gemini failed for models [${tried}]: ${lastError}`);
   }
 
-  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
-  text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
-  const parsed = JSON.parse(text) as GeneratedPost;
+  const parsed = extractAndRepairJson(text) as GeneratedPost;
   if (!parsed.title || !parsed.content || !parsed.excerpt) {
     throw new Error("Gemini returned invalid post payload");
   }
