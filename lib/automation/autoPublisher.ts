@@ -162,9 +162,11 @@ Constraints:
 
       if (!response.ok) {
         lastError = await response.text();
-        if (response.status === 429) {
-          // Rate limit / Quota exceeded -> try the next key
-          console.warn(`[AutoPublisher] Key rate limited on model ${model}. Trying next key...`);
+        const isKeyError = response.status === 429 || response.status === 403 || lastError.includes("API_KEY_INVALID") || lastError.includes("API key expired");
+        
+        if (isKeyError) {
+          // Rate limit / Quota exceeded / Expired Key -> try the next key
+          console.warn(`[AutoPublisher] Key error (${response.status}) on model ${model}. Trying next key...`);
           continue;
         }
         // Other errors (e.g., 400 Bad Request, 500) -> likely model or prompt issue, try next model
