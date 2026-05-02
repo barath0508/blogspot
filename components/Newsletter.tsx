@@ -77,6 +77,7 @@ export function Newsletter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={status === "loading"}
+                suppressHydrationWarning
               />
             </div>
             <div className="mt-4 sm:mt-0">
@@ -84,6 +85,7 @@ export function Newsletter() {
                 type="submit"
                 disabled={status === "loading"}
                 className="block w-full rounded-xl bg-gray-900 px-6 py-3.5 text-base font-bold text-white shadow-md hover:bg-gray-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap"
+                suppressHydrationWarning
               >
                 {status === "loading" ? "Subscribing..." : "Subscribe →"}
               </button>
