@@ -91,15 +91,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-xl shadow-sm">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-            <Link href="/" className="group flex items-center gap-2.5 font-bold text-gray-900 tracking-tight text-lg">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-200 group-hover:shadow-indigo-300 transition-all duration-300 group-hover:scale-105 text-sm font-black">T</span>
-              Tech<span className="text-indigo-600 font-extrabold">Trends</span>
+            <Link href="/" className="group flex items-center gap-2 font-bold text-gray-900 tracking-tight text-lg">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-200 group-hover:shadow-indigo-300 transition-all duration-300 group-hover:scale-105 text-sm font-black">T</span>
+              <span className="truncate">Tech<span className="text-indigo-600 font-extrabold hidden sm:inline">Trends</span></span>
             </Link>
-            <nav className="flex items-center gap-1">
-              <Link href="/" className="rounded-xl px-4 py-2 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+            <nav className="flex items-center gap-0.5 sm:gap-1">
+              <Link href="/" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
                 Home
               </Link>
-              <Link href="/admin" className="rounded-xl px-4 py-2 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+              <Link href="/admin" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
                 Admin
               </Link>
             </nav>
@@ -115,8 +115,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex flex-col gap-3 max-w-xs">
                 <Link href="/" className="flex items-center gap-2 font-bold text-gray-900 text-lg w-fit">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-black">T</span>
-                  Tech<span className="text-indigo-600 font-extrabold">Trends</span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-black">T</span>
+                  <span>Tech<span className="text-indigo-600 font-extrabold">Trends</span></span>
                 </Link>
                 <p className="text-sm text-gray-500 leading-relaxed">
                   AI-powered insights on technology, digital growth, and trending innovations — updated automatically 24/7.
