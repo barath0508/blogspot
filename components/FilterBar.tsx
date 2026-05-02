@@ -3,17 +3,16 @@
 import { useRouter, useSearchParams } from "next/navigation";
 
 type Option = { name: string; slug: string };
-type Props = { categories: Option[]; tags: Option[] };
+type Props = { categories: Option[] };
 
-export function FilterBar({ categories, tags }: Props) {
+export function FilterBar({ categories }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category") ?? "";
-  const selectedTag = searchParams.get("tag") ?? "";
 
-  const updateFilter = (key: "category" | "tag", value: string) => {
+  const updateFilter = (key: "category", value: string) => {
     const next = new URLSearchParams(searchParams.toString());
-    if (!value || (key === "category" && value === selectedCategory) || (key === "tag" && value === selectedTag)) {
+    if (!value || (key === "category" && value === selectedCategory)) {
       next.delete(key);
     } else {
       next.set(key, value);
@@ -24,7 +23,7 @@ export function FilterBar({ categories, tags }: Props) {
   };
 
   const clearAll = () => router.push("/");
-  const hasFilter = selectedCategory || selectedTag;
+  const hasFilter = selectedCategory;
 
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -38,21 +37,6 @@ export function FilterBar({ categories, tags }: Props) {
               className={`filter-pill${selectedCategory === c.slug ? " active" : ""}`}
             >
               {c.name}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {tags.length > 0 && (
-        <div className="filter-pills">
-          <span className="filter-group-label">Tag</span>
-          {tags.slice(0, 12).map((t) => (
-            <button
-              key={t.slug}
-              onClick={() => updateFilter("tag", t.slug)}
-              className={`filter-pill${selectedTag === t.slug ? " active" : ""}`}
-            >
-              #{t.name}
             </button>
           ))}
         </div>

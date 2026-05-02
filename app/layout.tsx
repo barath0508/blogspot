@@ -7,18 +7,18 @@ import "./globals.css";
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], display: "swap" });
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-const SITE_NAME = "Tech & Trends";
-const SITE_DESCRIPTION = "Your daily source for AI-powered insights on technology, digital growth, and trending innovations.";
+const SITE_NAME = "Insight Daily";
+const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world."
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
   title: {
-    default: `${SITE_NAME} — Tech, AI & Digital Insights`,
+    default: `${SITE_NAME} — Technology, AI & Ideas`,
     template: `%s | ${SITE_NAME}`
   },
   description: SITE_DESCRIPTION,
-  keywords: ["technology blog", "AI insights", "digital growth", "tech trends", "nextjs blog", "trending tech"],
+  keywords: ["technology", "artificial intelligence", "digital trends", "tech analysis", "innovation", "future of tech"],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: `${SITE_NAME} — Tech, AI & Digital Insights`,
+    title: `${SITE_NAME} — Technology, AI & Ideas`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_NAME,
@@ -48,9 +48,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Tech, AI & Digital Insights`,
+    title: `${SITE_NAME} — Technology, AI & Ideas`,
     description: SITE_DESCRIPTION,
-    site: "@techtrends"
+    site: "@insightdaily"
   }
 };
 
@@ -89,19 +89,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
 
-        <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-xl shadow-sm">
+        <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-xl shadow-sm">
           <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-            <Link href="/" className="group flex items-center gap-2 font-bold text-gray-900 tracking-tight text-lg">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-200 group-hover:shadow-indigo-300 transition-all duration-300 group-hover:scale-105 text-sm font-black">T</span>
-              <span className="truncate">Tech<span className="text-indigo-600 font-extrabold hidden sm:inline">Trends</span></span>
+            <Link href="/" className="group flex items-center gap-2.5 font-bold text-gray-900 tracking-tight">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-200 group-hover:shadow-indigo-300 transition-all duration-300 group-hover:scale-105 text-sm font-black">I</span>
+              <span className="text-lg tracking-tight">Insight<span className="text-indigo-600 font-extrabold">Daily</span></span>
             </Link>
             <nav className="flex items-center gap-0.5 sm:gap-1">
-              <Link href="/" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
-                Home
-              </Link>
-              <Link href="/admin" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
-                Admin
-              </Link>
+              <Link href="/" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">Home</Link>
+              <Link href="/?category=technology" className="hidden sm:block rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">Topics</Link>
+              <Link href="/admin" className="ml-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm">Dashboard</Link>
             </nav>
           </div>
         </header>
@@ -110,37 +107,48 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
         </main>
 
-        <footer className="border-t border-gray-100 bg-white mt-16">
-          <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex flex-col gap-3 max-w-xs">
-                <Link href="/" className="flex items-center gap-2 font-bold text-gray-900 text-lg w-fit">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-black">T</span>
-                  <span>Tech<span className="text-indigo-600 font-extrabold">Trends</span></span>
+        <footer className="border-t border-gray-100 bg-white mt-20">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+            <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-4 max-w-sm">
+                <Link href="/" className="flex items-center gap-2.5 font-bold text-gray-900 w-fit">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-sm font-black">I</span>
+                  <span className="text-lg">Insight<span className="text-indigo-600 font-extrabold">Daily</span></span>
                 </Link>
                 <p className="text-sm text-gray-500 leading-relaxed">
-                  AI-powered insights on technology, digital growth, and trending innovations — updated automatically 24/7.
+                  In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world — published automatically every 30 minutes.
                 </p>
-              </div>
-              <div className="flex gap-10 text-sm">
-                <div className="flex flex-col gap-2">
-                  <span className="font-semibold text-gray-900 text-xs uppercase tracking-wider">Navigate</span>
-                  <Link href="/" className="text-gray-500 hover:text-indigo-600 transition-colors">Home</Link>
-                  <Link href="/admin" className="text-gray-500 hover:text-indigo-600 transition-colors">Admin</Link>
-                  <a href="/sitemap.xml" className="text-gray-500 hover:text-indigo-600 transition-colors" target="_blank" rel="noopener">Sitemap</a>
+                <div className="flex items-center gap-3 pt-1">
+                  <a href="https://twitter.com/insightdaily" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-400 hover:text-indigo-600 transition-colors">
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </a>
+                  <a href="https://linkedin.com/company/insightdaily" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-gray-400 hover:text-indigo-600 transition-colors">
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </a>
+                  <a href="/sitemap.xml" target="_blank" rel="noopener" className="text-xs text-gray-400 hover:text-indigo-600 transition-colors font-medium ml-1">Sitemap</a>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <span className="font-semibold text-gray-900 text-xs uppercase tracking-wider">Connect</span>
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-indigo-600 transition-colors">Twitter / X</a>
-                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-indigo-600 transition-colors">LinkedIn</a>
+              </div>
+              <div className="flex gap-12 text-sm">
+                <div className="flex flex-col gap-2.5">
+                  <span className="font-semibold text-gray-900 text-xs uppercase tracking-wider mb-1">Explore</span>
+                  <Link href="/" className="text-gray-500 hover:text-indigo-600 transition-colors">Home</Link>
+                  <Link href="/?category=technology" className="text-gray-500 hover:text-indigo-600 transition-colors">Technology</Link>
+                  <Link href="/?category=ai" className="text-gray-500 hover:text-indigo-600 transition-colors">Artificial Intelligence</Link>
+                  <Link href="/?category=business" className="text-gray-500 hover:text-indigo-600 transition-colors">Business</Link>
+                </div>
+                <div className="flex flex-col gap-2.5">
+                  <span className="font-semibold text-gray-900 text-xs uppercase tracking-wider mb-1">Company</span>
+                  <Link href="/admin" className="text-gray-500 hover:text-indigo-600 transition-colors">Dashboard</Link>
+                  <a href="mailto:hello@insightdaily.com" className="text-gray-500 hover:text-indigo-600 transition-colors">Contact</a>
+                  <a href="/sitemap.xml" target="_blank" rel="noopener" className="text-gray-500 hover:text-indigo-600 transition-colors">Sitemap</a>
                 </div>
               </div>
             </div>
-            <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-gray-100 pt-6 text-xs text-gray-400">
+            <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-gray-100 pt-6 text-xs text-gray-400">
               <span>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</span>
               <span className="flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-200 px-3 py-1 font-medium">
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                Systems Online
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                Publishing live
               </span>
             </div>
           </div>

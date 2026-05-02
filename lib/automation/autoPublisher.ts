@@ -103,8 +103,9 @@ function extractAndRepairJson(raw: string): unknown {
 }
 
 async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY is missing");
+  const rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || "";
+  const apiKeys = rawKeys.split(",").map(k => k.trim()).filter(Boolean);
+  if (!apiKeys.length) throw new Error("No Gemini API keys found in environment.");
   const configuredModel = process.env.GEMINI_MODEL?.trim();
   const modelsToTry = configuredModel
     ? [configuredModel, "gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-flash"]
@@ -140,37 +141,45 @@ Constraints:
   let text = "";
   let lastError = "";
 
-  for (const model of modelsToTry) {
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  outer: for (const model of modelsToTry) {
+    for (const apiKey of apiKeys) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       assertAllowedUrl(geminiUrl);
       const response = await fetch(
-      geminiUrl,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            responseMimeType: "application/json"
-          }
-        })
+        geminiUrl,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              responseMimeType: "application/json"
+            }
+          })
+        }
+      );
+
+      if (!response.ok) {
+        lastError = await response.text();
+        if (response.status === 429) {
+          // Rate limit / Quota exceeded -> try the next key
+          console.warn(`[AutoPublisher] Key rate limited on model ${model}. Trying next key...`);
+          continue;
+        }
+        // Other errors (e.g., 400 Bad Request, 500) -> likely model or prompt issue, try next model
+        break;
       }
-    );
 
-    if (!response.ok) {
-      lastError = await response.text();
-      continue;
+      const data = await response.json();
+      text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      if (text) break outer;
     }
-
-    const data = await response.json();
-    text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    if (text) break;
   }
 
   if (!text) {
     const tried = modelsToTry.join(", ");
-    throw new Error(`Gemini failed for models [${tried}]: ${lastError}`);
+    throw new Error(`Gemini failed across models [${tried}] and ${apiKeys.length} key(s). Last error: ${lastError}`);
   }
 
   const parsed = extractAndRepairJson(text) as GeneratedPost;

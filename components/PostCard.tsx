@@ -21,7 +21,7 @@ export function PostCard({ post, index = 0, featured = false }: Props) {
   if (featured) {
     return (
       <Link href={`/blog/${post.slug}`} className="featured-card group block" style={{ animationDelay: "0ms" }}>
-        <span className="featured-badge">⚡ Featured</span>
+        <span className="featured-badge">✦ Editor's Pick</span>
         <div className="relative overflow-hidden bg-gray-100">
           {post.cover_image ? (
             <Image
@@ -52,8 +52,8 @@ export function PostCard({ post, index = 0, featured = false }: Props) {
             <span>·</span>
             <span>{time} min read</span>
           </div>
-          <span className="inline-flex items-center gap-1.5 text-sm font-bold text-purple-600 group-hover:gap-3 transition-all">
-            Read article
+          <span className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 group-hover:gap-3 transition-all">
+            Read story
             <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
@@ -116,8 +116,8 @@ export function PostCard({ post, index = 0, featured = false }: Props) {
           </div>
         )}
 
-        <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-purple-600 group-hover:gap-2.5 transition-all">
-          Read article
+        <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 group-hover:gap-2.5 transition-all">
+          Read story
           <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
