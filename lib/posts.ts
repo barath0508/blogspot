@@ -4,7 +4,7 @@ import { PostRecord } from "@/types/blog";
 const POST_SELECT =
   "id,title,slug,excerpt,content,meta_title,meta_description,seo_keywords,cover_image,is_published,published_at,created_at,updated_at,post_categories(categories(slug,name)),post_tags(tags(slug,name))";
 
-export async function getPublishedPosts(params?: { category?: string; tag?: string }) {
+export async function getPublishedPosts(params?: { category?: string; tag?: string; q?: string }) {
   const supabase = getSupabase();
 
   // Resolve post IDs for category filter
@@ -37,6 +37,12 @@ export async function getPublishedPosts(params?: { category?: string; tag?: stri
 
   if (categoryPostIds) query = query.in("id", categoryPostIds);
   if (tagPostIds) query = query.in("id", tagPostIds);
+
+  // Text search on title + excerpt
+  if (params?.q) {
+    const term = params.q.trim();
+    query = query.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);
+  }
 
   const { data, error } = await query;
   if (error) throw error;
