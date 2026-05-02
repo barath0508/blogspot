@@ -10,6 +10,8 @@ import { LikeButton } from "@/components/LikeButton";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { ShareButtons } from "@/components/ShareButtons";
 import { PostCard } from "@/components/PostCard";
+import { TableOfContents } from "@/components/TableOfContents";
+import { BackToTop } from "@/components/BackToTop";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
@@ -143,8 +145,9 @@ export default async function BlogPostPage({ params }: Props) {
         <span className="text-gray-600 line-clamp-1 font-medium">{post.title}</span>
       </nav>
 
-      <article className="mx-auto max-w-3xl">
-        <header className="mb-8 space-y-5">
+      <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 xl:gap-24 items-start">
+        <article className="w-full min-w-0">
+          <header className="mb-8 space-y-5">
           {/* Tags */}
           {post.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -245,8 +248,16 @@ export default async function BlogPostPage({ params }: Props) {
           </section>
         )}
 
-        <CommentsSection slug={post.slug} initialComments={comments ?? []} />
-      </article>
+          <CommentsSection slug={post.slug} initialComments={comments ?? []} />
+        </article>
+
+        {/* Right Sidebar (Table of Contents) */}
+        <aside className="hidden lg:block">
+          <TableOfContents />
+        </aside>
+      </div>
+
+      <BackToTop />
     </div>
   );
 }

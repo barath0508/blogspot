@@ -126,6 +126,7 @@ You are writing an SEO blog post. Return only valid JSON with this exact shape:
 
 Topic: "${topic}"
 Constraints:
+- MUST write the entire post exclusively in English, regardless of the origin or topic.
 - Keep title under 65 characters.
 - Excerpt under 180 characters.
 - Meta title under 60 characters.

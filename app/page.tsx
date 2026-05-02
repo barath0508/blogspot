@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { FilterBar } from "@/components/FilterBar";
 import { PostCard } from "@/components/PostCard";
 import { SearchBar } from "@/components/SearchBar";
+import { Newsletter } from "@/components/Newsletter";
 import { getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
@@ -110,6 +111,13 @@ export default async function Home({
             <PostCard key={post.id} post={post} index={i} />
           ))}
         </section>
+      )}
+
+      {/* ── Newsletter CTA ── */}
+      {!isFiltered && (
+        <div className="pt-10">
+          <Newsletter />
+        </div>
       )}
     </div>
   );
