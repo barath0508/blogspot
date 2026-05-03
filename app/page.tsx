@@ -59,7 +59,7 @@ export default async function Home({
   ];
 
   const categories = (allCategories || [])
-    .sort((a, b) => {
+    .sort((a: { name: string; slug: string }, b: { name: string; slug: string }) => {
       const aPref = PREFERRED_CATEGORIES.includes(a.slug) ? 1 : 0;
       const bPref = PREFERRED_CATEGORIES.includes(b.slug) ? 1 : 0;
       if (aPref !== bPref) return bPref - aPref;
