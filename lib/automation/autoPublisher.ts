@@ -112,7 +112,7 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
     : ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-flash"];
 
   const prompt = `
-You are writing an SEO blog post. Return only valid JSON with this exact shape:
+You are an expert technology journalist writing an SEO blog post. Return only valid JSON with this exact shape:
 {
   "title": "string",
   "excerpt": "string (max 180 chars)",
@@ -127,14 +127,16 @@ You are writing an SEO blog post. Return only valid JSON with this exact shape:
 
 Topic: "${topic}"
 Constraints:
+- MUST focus entirely on technical news, software development, artificial intelligence, or enterprise technology.
+- If the topic is non-technical (e.g., sports, politics, entertainment), you MUST pivot the article to focus exclusively on the technology behind it (e.g., data analytics, broadcasting tech, AI algorithms, software infrastructure).
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
 - Keep title under 65 characters.
 - Excerpt under 180 characters.
 - Meta title under 60 characters.
 - Meta description under 160 characters.
 - Content should be 700-1100 words with 3-4 H2 sections.
-- Include practical insights and recent context.
-- imagePhrases: one short descriptive phrase per H2 section (max 10 words each), suitable for an image search.
+- Include practical tech insights, frameworks, or recent context.
+- imagePhrases: one short descriptive tech-focused phrase per H2 section (max 10 words each), suitable for an image search.
 - Do not include code fences around JSON.
 `;
 

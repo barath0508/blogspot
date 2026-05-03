@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ToastContainer } from "@/components/Toast";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], display: "swap" });
@@ -148,6 +149,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <nav className="flex items-center gap-0.5 sm:gap-1">
               <Link href="/" className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">Home</Link>
               <Link href="/?category=technology" className="hidden sm:block rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">Topics</Link>
+              <Link href={"/saved" as any} className="rounded-xl px-3 py-2 sm:px-4 text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-1.5"><svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg><span className="hidden sm:inline">Saved</span></Link>
               <Link href="/admin" className="ml-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm">Dashboard</Link>
             </nav>
           </div>
@@ -203,6 +205,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </div>
           </div>
         </footer>
+        <ToastContainer />
         <Analytics />
         <SpeedInsights />
       </body>

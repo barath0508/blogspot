@@ -45,7 +45,27 @@ export default async function Home({
   const posts = await getPublishedPosts({ category: params.category, tag: params.tag, q: params.q });
   const supabase = getSupabase();
 
-  const { data: categories } = await supabase.from("categories").select("name,slug").order("name");
+  const { data: allCategories } = await supabase.from("categories").select("name,slug").order("name");
+
+  const PREFERRED_CATEGORIES = [
+    "technology",
+    "artificial-intelligence",
+    "software-development",
+    "business",
+    "startup",
+    "innovation",
+    "cybersecurity",
+    "trending"
+  ];
+
+  const categories = (allCategories || [])
+    .sort((a, b) => {
+      const aPref = PREFERRED_CATEGORIES.includes(a.slug) ? 1 : 0;
+      const bPref = PREFERRED_CATEGORIES.includes(b.slug) ? 1 : 0;
+      if (aPref !== bPref) return bPref - aPref;
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, 8);
 
   const isFiltered = Boolean(params.category || params.tag || params.q);
   const featuredPost = !isFiltered ? posts[0] : null;
@@ -67,10 +87,27 @@ export default async function Home({
     }))
   } : null;
 
+  const breadcrumbJsonLd = isFiltered ? {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { 
+        "@type": "ListItem", 
+        position: 2, 
+        name: params.category ? `Category: ${params.category}` : params.tag ? `Tag: ${params.tag}` : "Search", 
+        item: `${SITE_URL}/?${params.category ? `category=${params.category}` : params.tag ? `tag=${params.tag}` : `q=${params.q}`}` 
+      }
+    ]
+  } : null;
+
   return (
     <div className="space-y-10">
       {itemListJsonLd && (
         <Script id="itemlist-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      )}
+      {breadcrumbJsonLd && (
+        <Script id="breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       )}
       {/* ── Hero Section ── */}
       {!isFiltered && (

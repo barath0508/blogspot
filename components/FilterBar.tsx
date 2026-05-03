@@ -33,6 +33,7 @@ export function FilterBar({ categories }: Props) {
           {categories.map((c) => (
             <button
               key={c.slug}
+              suppressHydrationWarning
               onClick={() => updateFilter("category", c.slug)}
               className={`filter-pill${selectedCategory === c.slug ? " active" : ""}`}
             >
@@ -45,6 +46,7 @@ export function FilterBar({ categories }: Props) {
       {hasFilter && (
         <div>
           <button
+            suppressHydrationWarning
             onClick={clearAll}
             className="filter-pill"
             style={{ borderColor: "#fca5a5", color: "#dc2626", background: "#fef2f2" }}

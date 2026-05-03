@@ -11,6 +11,7 @@ import { ReadingProgress } from "@/components/ReadingProgress";
 import { ShareButtons } from "@/components/ShareButtons";
 import { PostCard } from "@/components/PostCard";
 import { TableOfContents } from "@/components/TableOfContents";
+import { BookmarkButton } from "@/components/BookmarkButton";
 import { BackToTop } from "@/components/BackToTop";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
@@ -196,105 +197,106 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 xl:gap-24 items-start">
         <article className="w-full min-w-0">
           <header className="mb-8 space-y-5">
-          {/* Tags */}
-          {post.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.tags.slice(0, 4).map((tag) => (
-                <Link
-                  key={tag.slug}
-                  href={`/?tag=${tag.slug}`}
-                  className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100 hover:bg-purple-100 transition-colors"
-                >
-                  #{tag.name}
-                </Link>
-              ))}
+            {/* Tags */}
+            {post.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {post.tags.slice(0, 4).map((tag) => (
+                  <Link
+                    key={tag.slug}
+                    href={`/?tag=${tag.slug}`}
+                    className="rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100 hover:bg-purple-100 transition-colors"
+                  >
+                    #{tag.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Title */}
+            <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+              {post.title}
+            </h1>
+
+            {/* Excerpt */}
+            <p className="text-lg text-gray-500 leading-relaxed">{post.excerpt}</p>
+
+            {/* Meta row */}
+            <div className="flex flex-wrap items-center gap-3 border-t border-b border-gray-100 py-3 text-sm text-gray-400">
+              <time className="font-medium text-gray-600" dateTime={post.published_at ?? post.created_at}>
+                {dateStr}
+              </time>
+              <span>·</span>
+              <span>{readTime} min read</span>
+              <span>·</span>
+              <span>{wordCount.toLocaleString()} words</span>
+            </div>
+          </header>
+
+          {/* Cover image */}
+          {post.cover_image && (
+            <div className="mb-10 overflow-hidden rounded-2xl border border-gray-100 shadow-sm relative aspect-video">
+              <Image
+                src={post.cover_image}
+                alt={post.title}
+                fill
+                unoptimized
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
             </div>
           )}
 
-          {/* Title */}
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-            {post.title}
-          </h1>
-
-          {/* Excerpt */}
-          <p className="text-lg text-gray-500 leading-relaxed">{post.excerpt}</p>
-
-          {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-3 border-t border-b border-gray-100 py-3 text-sm text-gray-400">
-            <time className="font-medium text-gray-600" dateTime={post.published_at ?? post.created_at}>
-              {dateStr}
-            </time>
-            <span>·</span>
-            <span>{readTime} min read</span>
-            <span>·</span>
-            <span>{wordCount.toLocaleString()} words</span>
-          </div>
-        </header>
-
-        {/* Cover image */}
-        {post.cover_image && (
-          <div className="mb-10 overflow-hidden rounded-2xl border border-gray-100 shadow-sm relative aspect-video">
-            <Image
-              src={post.cover_image}
-              alt={post.title}
-              fill
-              unoptimized
-              className="object-cover"
-              priority
-              sizes="(max-width: 768px) 100vw, 768px"
-            />
-          </div>
-        )}
-
-        {/* Content */}
-        <section className="prose max-w-none">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              img: ({ src, alt }) => (
-                <span className="block relative w-full aspect-video my-6">
-                  <Image
-                    src={String(src ?? "")}
-                    alt={String(alt ?? "")}
-                    fill
-                    unoptimized
-                    className="rounded-2xl object-cover border border-gray-100 shadow-sm"
-                    loading="lazy"
-                    sizes="(max-width: 768px) 100vw, 768px"
-                  />
-                </span>
-              )
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
-        </section>
-
-        {/* ── Share + Actions ── */}
-        <div className="mt-10 flex flex-col gap-6 border-t border-gray-100 pt-8">
-          <ShareButtons url={postUrl} title={post.title} />
-          <div className="flex items-center gap-4">
-            <LikeButton slug={post.slug} initialLikes={count ?? 0} />
-            <Link
-              href="/"
-              className="rounded-xl border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+          {/* Content */}
+          <section className="prose max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                img: ({ src, alt }) => (
+                  <span className="block relative w-full aspect-video my-6">
+                    <Image
+                      src={String(src ?? "")}
+                      alt={String(alt ?? "")}
+                      fill
+                      unoptimized
+                      className="rounded-2xl object-cover border border-gray-100 shadow-sm"
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, 768px"
+                    />
+                  </span>
+                )
+              }}
             >
-              ← More articles
-            </Link>
-          </div>
-        </div>
-
-        {/* ── Related Posts ── */}
-        {relatedPosts.length > 0 && (
-          <section className="mt-14" aria-label="Related articles">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Articles</h2>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedPosts.map((rp, i) => (
-                <PostCard key={rp.id} post={rp} index={i} />
-              ))}
-            </div>
+              {post.content}
+            </ReactMarkdown>
           </section>
-        )}
+
+          {/* ── Share + Actions ── */}
+          <div className="mt-10 flex flex-col gap-6 border-t border-gray-100 pt-8">
+            <ShareButtons url={postUrl} title={post.title} />
+            <div className="flex items-center gap-4">
+              <LikeButton slug={post.slug} initialLikes={count ?? 0} />
+              <BookmarkButton slug={post.slug} withLabel />
+              <Link
+                href="/"
+                className="ml-auto rounded-xl border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                ← More articles
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Related Posts ── */}
+          {relatedPosts.length > 0 && (
+            <section className="mt-14" aria-label="Related articles">
+              <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Articles</h2>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {relatedPosts.map((rp, i) => (
+                  <PostCard key={rp.id} post={rp} index={i} />
+                ))}
+              </div>
+            </section>
+          )}
 
           <CommentsSection slug={post.slug} initialComments={comments ?? []} />
         </article>
