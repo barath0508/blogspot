@@ -107,9 +107,10 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
   const apiKeys = rawKeys.split(",").map(k => k.trim()).filter(Boolean);
   if (!apiKeys.length) throw new Error("No Gemini API keys found in environment.");
   const configuredModel = process.env.GEMINI_MODEL?.trim();
+  const defaultModels = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-pro"];
   const modelsToTry = configuredModel
-    ? [configuredModel, "gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-flash"]
-    : ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-flash"];
+    ? [configuredModel, ...defaultModels.filter(m => m !== configuredModel)]
+    : defaultModels;
 
   const prompt = `
 You are an expert technology journalist writing an SEO blog post. Return only valid JSON with this exact shape:
