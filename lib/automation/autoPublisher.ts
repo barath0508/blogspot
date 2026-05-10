@@ -113,7 +113,7 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
     : defaultModels;
 
   const prompt = `
-You are an expert technology journalist writing an SEO blog post. Return only valid JSON with this exact shape:
+You are an expert journalist writing a high-quality SEO blog post. Return only valid JSON with this exact shape:
 {
   "title": "string",
   "excerpt": "string (max 180 chars)",
@@ -128,16 +128,16 @@ You are an expert technology journalist writing an SEO blog post. Return only va
 
 Topic: "${topic}"
 Constraints:
-- MUST focus entirely on technical news, software development, artificial intelligence, or enterprise technology.
-- If the topic is non-technical (e.g., sports, politics, entertainment), you MUST pivot the article to focus exclusively on the technology behind it (e.g., data analytics, broadcasting tech, AI algorithms, software infrastructure).
+- Write a comprehensive, engaging, and highly informative article directly about the topic.
+- Do not artificially force a technology pivot if the topic is non-technical (e.g., sports, politics, entertainment, lifestyle). Cover the subject naturally.
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
 - Keep title under 65 characters.
 - Excerpt under 180 characters.
 - Meta title under 60 characters.
 - Meta description under 160 characters.
 - Content should be 700-1100 words with 3-4 H2 sections.
-- Include practical tech insights, frameworks, or recent context.
-- imagePhrases: one short descriptive tech-focused phrase per H2 section (max 10 words each), suitable for an image search.
+- Include practical insights, engaging details, and recent context.
+- imagePhrases: one short descriptive phrase per H2 section (max 10 words each), capturing the visual essence of the section, suitable for an image search.
 - Do not include code fences around JSON.
 `;
 
@@ -212,8 +212,11 @@ Constraints:
 }
 
 function generateImageUrl(phrase: string, width = 1600, height = 900) {
-  // Use loremflickr to fetch real images related to the phrase
-  const keywords = encodeURIComponent(`${phrase},technology`.substring(0, 100));
+  // Use loremflickr to fetch real images related to the phrase. 
+  // Spaces cause 403 Forbidden, so we extract the first meaningful word.
+  const words = phrase.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(' ').filter(w => w.length > 3);
+  const mainKeyword = words.length > 0 ? words[0] : 'news';
+  const keywords = encodeURIComponent(mainKeyword);
   return `https://loremflickr.com/${width}/${height}/${keywords}`;
 }
 
