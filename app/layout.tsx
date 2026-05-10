@@ -121,6 +121,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name="color-scheme" content="light" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8825674134696584"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={`${jakarta.className} bg-[#fafafa] text-gray-900`}>
         {GA_ID && (
