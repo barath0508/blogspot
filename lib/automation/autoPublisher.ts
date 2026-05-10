@@ -211,8 +211,9 @@ Constraints:
 }
 
 function generateImageUrl(phrase: string, width = 1600, height = 900) {
-  const prompt = `High quality editorial blog image about ${phrase}, minimalist, clean, modern, no text`;
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
+  // Use loremflickr to fetch real images related to the phrase
+  const keywords = encodeURIComponent(`${phrase},technology`.substring(0, 100));
+  return `https://loremflickr.com/${width}/${height}/${keywords}`;
 }
 
 function injectSectionImages(content: string, imagePhrases: string[]): string {

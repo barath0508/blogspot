@@ -110,7 +110,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://image.pollinations.ai" />
+        <link rel="dns-prefetch" href="https://loremflickr.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} RSS Feed`} href={`${SITE_URL}/feed.xml`} />
         <link rel="icon" href="/favicon.ico" sizes="any" />
