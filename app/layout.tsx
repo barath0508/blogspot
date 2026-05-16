@@ -73,6 +73,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://image.pollinations.ai" />
         <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} RSS Feed`} href={`${SITE_URL}/feed.xml`} />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} — Latest Articles`} href={`${SITE_URL}/feed.xml`} />
+        {/* Feedly source metadata */}
+        <meta name="webfeeds:cover" content={`${SITE_URL}/og-default.png`} />
+        <meta name="webfeeds:icon" content={`${SITE_URL}/icon-512.png`} />
+        <meta name="webfeeds:logo" content={`${SITE_URL}/icon-512.png`} />
+        <meta name="webfeeds:accentColor" content="#0d9488" />
+        <meta name="webfeeds:related" content="layout=card&target=browser" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
