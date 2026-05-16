@@ -1,10 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true,
+  poweredByHeader: false,
   images: {
-    unoptimized: process.env.NODE_ENV === "development",
+    unoptimized: true,
     remotePatterns: [
-      { protocol: "https", hostname: "loremflickr.com" }
+      { protocol: "https", hostname: "image.pollinations.ai" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "loremflickr.com" },
     ]
   },
   async headers() {
@@ -23,6 +27,12 @@ const nextConfig: NextConfig = {
         source: "/blog/:slug",
         headers: [
           { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=3600" }
+        ]
+      },
+      {
+        source: "/feed.xml",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" }
         ]
       },
       {

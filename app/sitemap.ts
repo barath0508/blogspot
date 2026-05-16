@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSupabase } from "@/lib/supabase";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");

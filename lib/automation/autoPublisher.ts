@@ -16,6 +16,7 @@ type GeneratedPost = {
 const ALLOWED_FETCH_HOSTS = new Set([
   "trends.google.com",
   "generativelanguage.googleapis.com",
+  "source.unsplash.com",
 ]);
 
 function assertAllowedUrl(url: string) {
@@ -113,7 +114,7 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
     : defaultModels;
 
   const prompt = `
-You are an expert journalist writing a high-quality SEO blog post. Return only valid JSON with this exact shape:
+You are a world-class digital journalist and content strategist known for writing viral, high-click-rate articles. Your goal is to produce content that grabs attention instantly, keeps readers hooked, and ranks on Google. Return only valid JSON with this exact shape:
 {
   "title": "string",
   "excerpt": "string (max 180 chars)",
@@ -123,21 +124,33 @@ You are an expert journalist writing a high-quality SEO blog post. Return only v
   "seoKeywords": ["string","string","string","string","string"],
   "category": "string",
   "tags": ["string","string","string"],
-  "imagePhrases": ["short visual description for section 1","short visual description for section 2","short visual description for section 3"]
+  "imagePhrases": ["Unsplash search keyword for section 1","Unsplash search keyword for section 2","Unsplash search keyword for section 3"],
+  "coverImageKeyword": "single best Unsplash search keyword for the article cover image"
 }
 
 Topic: "${topic}"
-Constraints:
+
+Title Rules (CRITICAL for click-through rate):
+- Use power words: "Shocking", "Secret", "Finally", "This Changes Everything", "Nobody Talks About", "Here's Why", "The Truth About", "Everything You Need To Know", "Revealed", "The Real Reason", "You Won't Believe", etc.
+- Use curiosity gaps, numbers, or strong emotional hooks (e.g., "7 Reasons...", "The Hidden Truth About...", "Why Experts Are Saying...").
+- Title must be compelling enough to make someone stop scrolling and click.
+- Keep title under 65 characters but make every word count.
+
+Content Rules:
+- Open with a powerful hook — a shocking stat, bold claim, or provocative question in the first 2 sentences.
 - Write a comprehensive, engaging, and highly informative article directly about the topic.
 - Do not artificially force a technology pivot if the topic is non-technical (e.g., sports, politics, entertainment, lifestyle). Cover the subject naturally.
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
-- Keep title under 65 characters.
-- Excerpt under 180 characters.
-- Meta title under 60 characters.
-- Meta description under 160 characters.
-- Content should be 700-1100 words with 3-4 H2 sections.
-- Include practical insights, engaging details, and recent context.
-- imagePhrases: one short descriptive phrase per H2 section (max 10 words each), capturing the visual essence of the section, suitable for an image search.
+- Excerpt under 180 characters — make it intriguing so readers MUST click to find out more.
+- Meta title under 60 characters. Meta description under 160 characters — optimized for Google CTR.
+- Content should be 800-1200 words with 3-4 H2 sections. Each H2 should be equally gripping.
+- Include expert insights, surprising facts, actionable takeaways, and recent context.
+- End with a strong, memorable conclusion that leaves readers thinking.
+
+imagePhrases Rules:
+- Each imagePhrases entry must be a short, single-topic keyword phrase (2-4 words max) suitable for Unsplash search.
+- Use concrete, visual subjects (e.g., "futuristic technology", "city skyline night", "data analytics", "team collaboration") — NOT abstract phrases.
+- coverImageKeyword must be a single powerful, visual keyword (e.g., "innovation", "artificial intelligence", "space", "cybersecurity").
 - Do not include code fences around JSON.
 `;
 
@@ -207,17 +220,25 @@ Constraints:
     imagePhrases: ((parsed as any).imagePhrases || [])
       .map((p: string) => String(p).trim())
       .filter(Boolean)
-      .slice(0, 4)
-  };
+      .slice(0, 4),
+    coverImageKeyword: String((parsed as any).coverImageKeyword || parsed.category || "technology").trim()
+  } as GeneratedPost & { coverImageKeyword: string };
 }
 
 function generateImageUrl(phrase: string, width = 1600, height = 900) {
-  // Use loremflickr to fetch real images related to the phrase. 
-  // Spaces cause 403 Forbidden, so we extract the first meaningful word.
-  const words = phrase.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(' ').filter(w => w.length > 3);
-  const mainKeyword = words.length > 0 ? words[0] : 'news';
-  const keywords = encodeURIComponent(mainKeyword);
-  return `https://loremflickr.com/${width}/${height}/${keywords}`;
+  // Use Unsplash Source API for high-quality, topic-relevant photography.
+  // Extract the most meaningful keyword for the best image match.
+  const keyword = phrase
+    .replace(/[^a-zA-Z0-9\s]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(w => w.length > 2)
+    .slice(0, 2)
+    .join(',');
+  const safeKeyword = encodeURIComponent(keyword || 'technology');
+  // Add a cache-busting seed so each post gets a unique image
+  const seed = Math.floor(Math.random() * 1000);
+  return `https://source.unsplash.com/${width}x${height}/?${safeKeyword}&sig=${seed}`;
 }
 
 function injectSectionImages(content: string, imagePhrases: string[]): string {
@@ -296,7 +317,9 @@ export async function publishTrendingPost() {
     return { status: "skipped", reason: "already_published", topic, slug };
   }
 
-  const coverImage = generateImageUrl(topic);
+  // Use the AI-suggested coverImageKeyword for a highly relevant cover photo
+  const coverKeyword = (post as any).coverImageKeyword || topic;
+  const coverImage = generateImageUrl(coverKeyword);
   const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases);
   const contentWithLinks = await appendInternalLinks(contentWithSectionImages, topic);
   const { data: created, error } = await supabaseAdmin

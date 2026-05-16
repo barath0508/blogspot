@@ -2,77 +2,58 @@
 
 import { useEffect, useState } from "react";
 
-type Heading = {
-  id: string;
-  text: string;
-  level: number;
-};
+type Heading = { id: string; text: string; level: number };
 
 export function TableOfContents() {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    // Give the markdown a moment to render before finding headings
     const timer = setTimeout(() => {
       const elements = Array.from(document.querySelectorAll(".prose h2, .prose h3"));
-      
-      const parsedHeadings = elements.map((elem) => {
-        // If the markdown renderer didn't assign an ID, assign one based on text
-        if (!elem.id) {
-          elem.id = elem.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "section";
+      const parsed = elements.map((el) => {
+        if (!el.id) {
+          el.id = (el.textContent ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "section";
         }
-        return {
-          id: elem.id,
-          text: elem.textContent || "",
-          level: Number(elem.tagName.substring(1)),
-        };
+        return { id: el.id, text: el.textContent ?? "", level: Number(el.tagName[1]) };
       });
+      setHeadings(parsed);
 
-      setHeadings(parsedHeadings);
-
-      // Intersection Observer for scroll spy
-      const callback = (entries: IntersectionObserverEntry[]) => {
-        // Find all intersecting headings
-        const visibleHeadings = entries.filter(entry => entry.isIntersecting);
-        if (visibleHeadings.length > 0) {
-          // Set active to the topmost visible heading
-          setActiveId(visibleHeadings[0].target.id);
-        }
-      };
-
-      const observer = new IntersectionObserver(callback, { rootMargin: "0px 0px -80% 0px" });
-      elements.forEach((elem) => observer.observe(elem));
-
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries.filter((e) => e.isIntersecting);
+          if (visible.length > 0) setActiveId(visible[0].target.id);
+        },
+        { rootMargin: "0px 0px -70% 0px", threshold: 0.1 }
+      );
+      elements.forEach((el) => observer.observe(el));
       return () => observer.disconnect();
-    }, 500);
-
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 
   if (headings.length === 0) return null;
 
   return (
-    <div className="sticky top-28 p-6 rounded-2xl bg-white border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] max-h-[calc(100vh-140px)] overflow-y-auto">
-      <h3 className="font-bold text-gray-900 mb-4 uppercase tracking-wider text-xs">On this page</h3>
-      <nav className="flex flex-col gap-2.5">
-        {headings.map((heading) => (
+    <div className="toc-wrap" aria-label="Table of contents">
+      <div className="flex items-center gap-2 mb-4">
+        <svg className="h-3.5 w-3.5 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        <h3 className="text-xs font-bold text-foreground uppercase tracking-widest">On this page</h3>
+      </div>
+      <nav aria-label="Article sections">
+        {headings.map((h) => (
           <a
-            key={heading.id}
-            href={`#${heading.id}`}
+            key={h.id}
+            href={`#${h.id}`}
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth" });
+              document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            className={`text-sm transition-all duration-200 ${
-              heading.level === 3 ? "ml-4" : ""
-            } ${
-              activeId === heading.id
-                ? "text-purple-600 font-bold translate-x-1"
-                : "text-gray-500 hover:text-gray-900 hover:translate-x-1"
-            }`}
+            className={`toc-item ${h.level === 3 ? "level-3" : ""} ${activeId === h.id ? "active" : ""}`}
           >
-            {heading.text}
+            {h.text}
           </a>
         ))}
       </nav>

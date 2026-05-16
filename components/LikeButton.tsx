@@ -45,14 +45,15 @@ export function LikeButton({ slug, initialLikes }: Props) {
     <button
       onClick={onLike}
       disabled={busy || liked}
-      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
+      aria-label={liked ? `Liked — ${likes} likes` : `Like this article — ${likes} likes`}
+      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
         liked
-          ? "border-pink-200 bg-pink-50 text-pink-600 cursor-default"
-          : "border-gray-200 bg-white text-gray-600 hover:border-pink-300 hover:bg-pink-50 hover:text-pink-600"
+          ? "border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-400 cursor-default"
+          : "border-border bg-surface text-muted hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 dark:hover:border-rose-900 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
       } disabled:opacity-70`}
     >
       <svg
-        className={`h-4 w-4 transition-transform ${liked ? "scale-125" : ""}`}
+        className={`h-4 w-4 transition-transform duration-200 ${liked ? "scale-125" : ""}`}
         fill={liked ? "currentColor" : "none"}
         viewBox="0 0 24 24"
         stroke="currentColor"

@@ -27,9 +27,21 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "CCBot",
         disallow: ["/"]
+      },
+      {
+        userAgent: "anthropic-ai",
+        disallow: ["/"]
+      },
+      {
+        userAgent: "Claude-Web",
+        disallow: ["/"]
+      },
+      {
+        userAgent: "Omgilibot",
+        disallow: ["/"]
       }
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/feed.xml`],
     host: SITE_URL
   };
 }

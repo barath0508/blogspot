@@ -1,136 +1,176 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { PostRecord } from "@/types/blog";
-import { BookmarkButton } from "@/components/BookmarkButton";
 
 type Props = { post: PostRecord; index?: number; featured?: boolean };
 
 function readTime(content: string) {
-  const words = content.trim().split(/\s+/).length;
-  return Math.max(1, Math.round(words / 200));
+  return Math.max(1, Math.round(content.trim().split(/\s+/).length / 200));
 }
 
-export function PostCard({ post, index = 0, featured = false }: Props) {
-  const delay = `${index * 60}ms`;
+function isNew(publishedAt: string | null) {
+  if (!publishedAt) return false;
+  return Date.now() - new Date(publishedAt).getTime() < 12 * 60 * 60 * 1000;
+}
+
+function FeaturedCard({ post }: { post: PostRecord }) {
+  const time = readTime(post.content ?? post.excerpt ?? "");
+  const dateStr = post.published_at
+    ? new Date(post.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : "Draft";
+  const category = post.categories?.[0];
+  const fresh = isNew(post.published_at ?? null);
+
+  return (
+    <article className="group relative overflow-hidden rounded-lg border border-border/40 bg-card transition-all hover:border-primary/40">
+      <Link href={`/blog/${post.slug}`} className="block">
+        <div className="grid gap-0 lg:grid-cols-2">
+          {/* Image */}
+          <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full">
+            {post.cover_image ? (
+              <Image
+                src={post.cover_image}
+                alt={post.title}
+                fill
+                unoptimized
+                priority
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-secondary flex items-center justify-center">
+                <span className="font-serif text-4xl font-bold text-muted-foreground/30">ID</span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent lg:hidden" />
+            {fresh && (
+              <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-current" />
+                </span>
+                Just published
+              </span>
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="flex flex-col justify-center p-6 lg:p-10">
+            <div className="mb-4 flex items-center gap-3">
+              {category && (
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                  {category.name}
+                </span>
+              )}
+              <span className="text-xs text-muted-foreground">Featured</span>
+            </div>
+
+            <h2 className="mb-4 font-serif text-2xl font-bold leading-tight text-foreground lg:text-3xl">
+              <span className="text-balance">{post.title}</span>
+            </h2>
+
+            <p className="mb-6 text-sm leading-relaxed text-muted-foreground lg:text-base">
+              <span className="text-pretty line-clamp-3">{post.excerpt}</span>
+            </p>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 font-serif text-xs font-bold text-primary">
+                  ID
+                </div>
+                <div className="text-xs">
+                  <p className="font-medium text-foreground">Insight Daily</p>
+                  <p className="text-muted-foreground">{dateStr} · {time} min read</p>
+                </div>
+              </div>
+              <span className="flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:text-primary/80">
+                Read article
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+function GridCard({ post, index = 0 }: { post: PostRecord; index?: number }) {
   const time = readTime(post.content ?? post.excerpt ?? "");
   const dateStr = post.published_at
     ? new Date(post.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "Draft";
   const isoDate = post.published_at ?? post.created_at;
   const category = post.categories?.[0];
-
-  if (featured) {
-    return (
-      <div className="featured-card group relative block" style={{ animationDelay: "0ms" }}>
-        <Link href={`/blog/${post.slug}`} className="block h-full">
-          <span className="featured-badge">✦ Editor's Pick</span>
-          <div className="relative overflow-hidden bg-gray-100">
-            {post.cover_image ? (
-              <Image
-                src={post.cover_image}
-                alt={post.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 flex items-center justify-center text-6xl">📝</div>
-            )}
-          </div>
-          <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
-            {category && (
-              <span className="inline-flex w-fit items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 border border-indigo-100">
-                {category.name}
-              </span>
-            )}
-            <h2 className="text-2xl sm:text-3xl font-extrabold leading-tight text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-3">
-              {post.title}
-            </h2>
-            <p className="text-base text-gray-500 leading-relaxed line-clamp-2">{post.excerpt}</p>
-            <div className="flex items-center gap-3 text-sm text-gray-400">
-              <time dateTime={isoDate}>{dateStr}</time>
-              <span>·</span>
-              <span>{time} min read</span>
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 group-hover:gap-3 transition-all">
-              Read story
-              <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </span>
-          </div>
-        </Link>
-        <div className="absolute top-4 right-4 z-10">
-          <BookmarkButton slug={post.slug} className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-gray-100" />
-        </div>
-      </div>
-    );
-  }
+  const fresh = isNew(post.published_at ?? null);
 
   return (
-    <div
-      className="group card-hover animate-fade-up relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white"
-      style={{ animationDelay: delay }}
+    <article
+      className="group flex flex-col overflow-hidden rounded-lg border border-border/40 bg-card transition-all hover:border-primary/40 animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       <Link href={`/blog/${post.slug}`} className="flex flex-col flex-1">
-        <div className="relative h-44 overflow-hidden bg-gray-100 shrink-0">
+        {/* Image */}
+        <div className="relative aspect-[16/10] overflow-hidden">
           {post.cover_image ? (
             <Image
               src={post.cover_image}
               alt={post.title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              unoptimized
               loading="lazy"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center text-4xl">📝</div>
+            <div className="absolute inset-0 bg-secondary flex items-center justify-center">
+              <span className="font-serif text-3xl font-bold text-muted-foreground/30">ID</span>
+            </div>
           )}
-          {category && (
-            <span className="absolute top-3 left-3 rounded-full bg-white/90 backdrop-blur-sm px-2.5 py-0.5 text-xs font-bold text-indigo-700 shadow-sm border border-indigo-100 z-10">
-              {category.name}
+          {fresh && (
+            <span className="absolute top-3 left-3 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+              New
             </span>
           )}
         </div>
 
-        <div className="flex flex-1 flex-col gap-3 p-5">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <time dateTime={isoDate}>{dateStr}</time>
-            <span>·</span>
-            <span>{time} min read</span>
+        {/* Content */}
+        <div className="flex flex-1 flex-col p-5">
+          <div className="mb-3 flex items-center gap-2">
+            {category && (
+              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                {category.name}
+              </span>
+            )}
+            <span className="text-xs text-muted-foreground">{time} min read</span>
           </div>
 
-          <h2 className="line-clamp-2 text-lg font-bold leading-snug text-gray-900 group-hover:text-purple-600 transition-colors">
-            {post.title}
-          </h2>
+          <h3 className="mb-2 font-serif text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+            <span className="text-balance line-clamp-2">{post.title}</span>
+          </h3>
 
-          <p className="line-clamp-2 flex-1 text-sm text-gray-500 leading-relaxed">{post.excerpt}</p>
+          <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+            <span className="line-clamp-2 text-pretty">{post.excerpt}</span>
+          </p>
 
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {post.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag.slug}
-                  className="rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-700 border border-purple-100"
-                >
-                  #{tag.name}
-                </span>
-              ))}
+          <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 font-serif text-[10px] font-bold text-primary">
+              ID
             </div>
-          )}
-
-          <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 group-hover:gap-2.5 transition-all">
-            Read story
-            <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </span>
+            <div className="text-xs">
+              <span className="font-medium text-foreground">Insight Daily</span>
+              <span className="text-muted-foreground"> · </span>
+              <time dateTime={isoDate} className="text-muted-foreground">{dateStr}</time>
+            </div>
+          </div>
         </div>
       </Link>
-      <div className="absolute top-3 right-3 z-10">
-        <BookmarkButton slug={post.slug} className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-gray-100" />
-      </div>
-    </div>
+    </article>
   );
+}
+
+export function PostCard({ post, index = 0, featured = false }: Props) {
+  if (featured) return <FeaturedCard post={post} />;
+  return <GridCard post={post} index={index} />;
 }
