@@ -3,6 +3,9 @@ import { publishTrendingPost } from "@/lib/automation/autoPublisher";
 import { timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
+export const maxDuration = 300; // 5 min — enough for multiple Gemini calls
+
+const POSTS_PER_RUN = 6; // publishes 6 posts at once (~1 every 4 hours equivalent)
 
 function safeCompare(a: string, b: string) {
   try {
@@ -15,12 +18,14 @@ function safeCompare(a: string, b: string) {
 function isAuthorized(request: Request) {
   const secret = process.env.AUTOMATION_CRON_SECRET;
   if (!secret) return false;
-
   const authHeader = request.headers.get("authorization") ?? "";
   const headerSecret = request.headers.get("x-cron-secret") ?? "";
   const querySecret = new URL(request.url).searchParams.get("secret") ?? "";
-
-  return safeCompare(authHeader, `Bearer ${secret}`) || safeCompare(headerSecret, secret) || safeCompare(querySecret, secret);
+  return (
+    safeCompare(authHeader, `Bearer ${secret}`) ||
+    safeCompare(headerSecret, secret) ||
+    safeCompare(querySecret, secret)
+  );
 }
 
 export async function GET(request: Request) {
@@ -28,16 +33,30 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const result = await publishTrendingPost();
-    return NextResponse.json(result);
-  } catch (error) {
-    return NextResponse.json(
-      {
+  const count = Math.min(
+    parseInt(new URL(request.url).searchParams.get("count") ?? String(POSTS_PER_RUN), 10),
+    12 // hard cap
+  );
+
+  const results = [];
+
+  for (let i = 0; i < count; i++) {
+    try {
+      const result = await publishTrendingPost();
+      results.push(result);
+      // Small delay between posts to avoid Gemini rate limits
+      if (i < count - 1) await new Promise((r) => setTimeout(r, 3000));
+    } catch (error) {
+      results.push({
         status: "failed",
         error: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+      });
+    }
   }
+
+  const published = results.filter((r) => r.status === "published").length;
+  const skipped = results.filter((r) => r.status === "skipped").length;
+  const failed = results.filter((r) => r.status === "failed").length;
+
+  return NextResponse.json({ published, skipped, failed, results });
 }
