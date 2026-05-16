@@ -1,0 +1,12 @@
+/* TEAM */
+Site: Trendly
+Contact: hello@trendly.com
+Location: Global
+
+/* TECHNOLOGY */
+Next.js, Supabase, Tailwind CSS, Google Gemini AI, Vercel
+
+/* SITE */
+Last update: 2025
+Standards: HTML5, CSS3, RSS 2.0
+Components: React 19

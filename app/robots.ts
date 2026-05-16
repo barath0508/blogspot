@@ -41,7 +41,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/"]
       }
     ],
-    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/feed.xml`],
+    sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/google-news-sitemap.xml`, `${SITE_URL}/feed.xml`],
     host: SITE_URL
   };
 }

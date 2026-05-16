@@ -86,6 +86,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#0d9488" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* Google Publisher Center */}
+        <meta name="google-news-publication" content="Trendly" />
+        <link rel="author" href={`${SITE_URL}/humans.txt`} />
+        <link rel="sitemap" type="application/xml" href={`${SITE_URL}/sitemap.xml`} />
+        <link rel="sitemap" type="application/xml" title="Google News Sitemap" href={`${SITE_URL}/google-news-sitemap.xml`} />
         {/* Google Subscribe with Google (SwG) — Google News integration */}
         <script async type="application/javascript" src="https://news.google.com/swg/js/v1/swg-basic.js" />
       </head>

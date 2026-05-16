@@ -1,0 +1,4 @@
+Contact: mailto:hello@trendly.com
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://blogspot-phi.vercel.app/.well-known/security.txt
