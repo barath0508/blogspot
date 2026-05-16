@@ -1,8 +1,8 @@
 import { getPublishedPosts } from "@/lib/posts";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-const SITE_NAME = "Insight Daily";
-const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
+const SITE_NAME = "Trendly";
+const SITE_DESCRIPTION = "Trending technology news and AI-powered insights — updated every 30 minutes.";
 
 export const revalidate = 3600;
 

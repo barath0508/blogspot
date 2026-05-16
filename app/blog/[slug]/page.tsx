@@ -16,7 +16,7 @@ import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-const SITE_NAME = "Insight Daily";
+const SITE_NAME = "Trendly";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image", title, description,
-      site: "@insightdaily", creator: "@insightdaily",
+      site: "@trendly", creator: "@trendly",
       images: image ? [{ url: image, alt: title }] : [`${SITE_URL}/og-default.png`]
     }
   };

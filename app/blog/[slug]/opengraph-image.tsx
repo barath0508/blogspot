@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getPublishedPostBySlug } from "@/lib/posts";
 
 export const runtime = "edge";
-export const alt = "Insight Daily Blog Post";
+export const alt = "Trendly Blog Post";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -43,9 +43,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               background: "linear-gradient(135deg, #6366f1, #9333ea)",
               display: "flex", alignItems: "center", justifyContent: "center",
               color: "white", fontSize: 26, fontWeight: 900,
-            }}>ID</div>
+            }}>T</div>
             <span style={{ fontSize: 36, fontWeight: 900, color: "white", letterSpacing: "-0.02em" }}>
-              Insight<span style={{ color: "#818cf8" }}>Daily</span>
+              Trendly
             </span>
           </div>
           <span style={{ fontSize: 20, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
@@ -97,9 +97,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                 background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "white", fontSize: 20, fontWeight: 900,
-              }}>ID</div>
+              }}>T</div>
               <span style={{ fontSize: 28, fontWeight: 900, color: "#0f172a", letterSpacing: "-0.02em" }}>
-                Insight<span style={{ color: "#4f46e5" }}>Daily</span>
+                Trendly
               </span>
             </div>
             {/* Category pill */}

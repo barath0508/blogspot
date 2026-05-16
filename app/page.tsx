@@ -15,7 +15,7 @@ import { getSupabase } from "@/lib/supabase";
 export const revalidate = 60;
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-const SITE_NAME = "Insight Daily";
+const SITE_NAME = "Trendly";
 
 export async function generateMetadata(): Promise<Metadata> {
   const posts = await getPublishedPosts();
@@ -247,7 +247,7 @@ export default async function Home({
                   </h2>
                   <p className="mt-4 leading-relaxed text-muted-foreground">
                     <span className="text-pretty">
-                      Insight Daily was founded with a simple mission: to deliver high-signal analysis on technology and AI. Our AI-powered pipeline curates trending topics and generates expert-level articles every 30 minutes.
+                      Trendly was founded with a simple mission: to deliver high-signal analysis on technology and AI. Our AI-powered pipeline curates trending topics and generates expert-level articles every 30 minutes.
                     </span>
                   </p>
                   <div className="mt-8 flex gap-8">
@@ -269,9 +269,9 @@ export default async function Home({
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
                       <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="font-serif text-2xl font-bold text-primary">ID</span>
+                        <span className="font-serif text-2xl font-bold text-primary">T</span>
                       </div>
-                      <p className="font-serif text-lg font-semibold text-foreground">Insight Daily</p>
+                      <p className="font-serif text-lg font-semibold text-foreground">Trendly</p>
                       <p className="text-sm text-muted-foreground">Est. 2025</p>
                     </div>
                   </div>

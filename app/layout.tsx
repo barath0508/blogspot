@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-const SITE_NAME = "Insight Daily";
+const SITE_NAME = "Trendly";
 const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 export const metadata: Metadata = {
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE_URL, types: { "application/rss+xml": `${SITE_URL}/feed.xml` } },
   verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION, other: { "msvalidate.01": [process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ?? ""] } },
   openGraph: { title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, url: SITE_URL, siteName: SITE_NAME, type: "website", locale: "en_US", images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }] },
-  twitter: { card: "summary_large_image", title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, site: "@insightdaily", images: [`${SITE_URL}/og-default.png`] }
+  twitter: { card: "summary_large_image", title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, site: "@trendly", images: [`${SITE_URL}/og-default.png`] }
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     { "@type": "WebSite", "@id": `${SITE_URL}/#website`, name: SITE_NAME, url: SITE_URL, description: SITE_DESCRIPTION, inLanguage: "en-US", publisher: { "@id": `${SITE_URL}/#organization` }, potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/?q={search_term_string}` }, "query-input": "required name=search_term_string" } },
-    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", "@id": `${SITE_URL}/#logo`, url: `${SITE_URL}/icon-512.png`, width: 512, height: 512, caption: SITE_NAME }, sameAs: ["https://twitter.com/insightdaily","https://linkedin.com/company/insightdaily"] }
+    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", "@id": `${SITE_URL}/#logo`, url: `${SITE_URL}/icon-512.png`, width: 512, height: 512, caption: SITE_NAME }, sameAs: ["https://twitter.com/trendly","https://linkedin.com/company/trendly"] }
   ]
 };
 
@@ -46,7 +46,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/?category=technology", label: "Articles" },
   { href: "/?category=artificial-intelligence", label: "Categories" },
-  { href: "/admin", label: "About" },
+  { href: "/about", label: "About" },
 ];
 
 const FOOTER_LINKS = {
@@ -58,8 +58,9 @@ const FOOTER_LINKS = {
     { href: `${SITE_URL}/feed.xml`, label: "RSS Feed" },
   ],
   company: [
-    { href: "/admin", label: "Dashboard" },
-    { href: "mailto:hello@insightdaily.com", label: "Contact" },
+    { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+    { href: "/disclaimer", label: "Disclaimer" },
     { href: "/sitemap.xml", label: "Sitemap" },
   ],
 };
@@ -78,11 +79,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#0d9488" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* Google Subscribe with Google (SwG) — Google News integration */}
+        <script async type="application/javascript" src="https://news.google.com/swg/js/v1/swg-basic.js" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <a href="#main-content" className="skip-link">Skip to content</a>
 
+        <Script id="swg-init" strategy="afterInteractive">{`
+          (self.SWG_BASIC = self.SWG_BASIC || []).push(basicSubscriptions => {
+            basicSubscriptions.init({
+              type: "NewsArticle",
+              isPartOfType: ["Product"],
+              isPartOfProductId: "CAow1c3GDA:openaccess",
+              clientOptions: { theme: "light", lang: "en-GB" },
+            });
+          });
+        `}</Script>
         {GA_ID && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
@@ -96,7 +109,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">
             <Link href="/" className="flex items-center gap-2" aria-label={`${SITE_NAME} — Home`}>
               <span className="font-serif text-xl font-bold tracking-tight text-foreground">
-                The Chronicle
+                Trendly
               </span>
             </Link>
 
@@ -142,8 +155,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 </p>
                 <div className="mt-6 flex items-center gap-3">
                   {[
-                    { label: "Twitter", href: "https://twitter.com/insightdaily", icon: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
-                    { label: "LinkedIn", href: "https://linkedin.com/company/insightdaily", icon: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                    { label: "Twitter", href: "https://twitter.com/trendly", icon: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+                    { label: "LinkedIn", href: "https://linkedin.com/company/trendly", icon: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
                     { label: "RSS", href: `${SITE_URL}/feed.xml`, icon: <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><circle cx="3" cy="17" r="2"/><path d="M3 7a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8V7z"/><path d="M3 3a14 14 0 0 1 14 14h-2A12 12 0 0 0 3 5V3z"/></svg> },
                   ].map((s) => (
                     <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
@@ -173,9 +186,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <div>
                 <h4 className="mb-4 text-sm font-semibold text-foreground">Legal</h4>
                 <ul className="space-y-2.5">
-                  {[{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }, { label: "Sitemap", href: "/sitemap.xml" }].map((l) => (
+                  {[
+                    { label: "Privacy Policy", href: "/privacy-policy" },
+                    { label: "Terms of Service", href: "/terms-of-service" },
+                    { label: "Cookie Policy", href: "/cookie-policy" },
+                    { label: "Disclaimer", href: "/disclaimer" },
+                  ].map((l) => (
                     <li key={l.label}>
-                      <a href={l.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</a>
+                      <Link href={l.href as any} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{l.label}</Link>
                     </li>
                   ))}
                 </ul>
