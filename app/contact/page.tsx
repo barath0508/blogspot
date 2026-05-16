@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, Twitter, Linkedin, Rss } from "lucide-react";
+import { Mail, Linkedin, Rss } from "lucide-react";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
@@ -50,7 +50,7 @@ export default function Contact() {
               href: `mailto:ads@trendly.com`,
             },
             {
-              icon: Twitter,
+              icon: () => <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
               title: "Twitter / X",
               desc: "Follow us for the latest updates",
               value: "@trendly",

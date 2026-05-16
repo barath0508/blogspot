@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Rss, Mail, Twitter, Linkedin } from "lucide-react";
+import { Rss, Mail, Linkedin } from "lucide-react";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
@@ -115,7 +115,7 @@ export default function About() {
             {[
               { icon: Mail, label: "Email", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
               { icon: Rss, label: "RSS Feed", value: "Subscribe to our feed", href: `${SITE_URL}/feed.xml` },
-              { icon: Twitter, label: "Twitter / X", value: "@trendly", href: "https://twitter.com/trendly" },
+              { icon: () => <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>, label: "Twitter / X", value: "@trendly", href: "https://twitter.com/trendly" },
               { icon: Linkedin, label: "LinkedIn", value: "Trendly", href: "https://linkedin.com/company/trendly" },
             ].map((item) => (
               <a key={item.label} href={item.href} target={item.href.startsWith("mailto") ? undefined : "_blank"}
