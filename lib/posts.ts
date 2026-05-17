@@ -17,6 +17,11 @@ export async function getPublishedPosts(params?: {
   const from = (page - 1) * POSTS_PER_PAGE;
   const to = from + POSTS_PER_PAGE - 1;
 
+  // Skip empty search query
+  if (params?.q !== undefined && params.q.trim() === "") {
+    delete params.q;
+  }
+
   const categoryPostIds: string[] = [];
   if (params?.category) {
     const { data: cats } = await supabase

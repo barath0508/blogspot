@@ -205,6 +205,7 @@ export default async function BlogPostPage({ params }: Props) {
               alt={post.title}
               fill
               priority
+              unoptimized
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 768px"
             />
@@ -235,6 +236,7 @@ export default async function BlogPostPage({ params }: Props) {
                         src={String(src ?? "")}
                         alt={String(alt ?? "")}
                         fill
+                        unoptimized
                         className="object-cover"
                         loading="lazy"
                         sizes="(max-width: 768px) 100vw, 560px"

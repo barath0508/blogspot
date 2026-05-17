@@ -18,6 +18,10 @@ function isNew(publishedAt: string | null) {
   return Date.now() - new Date(publishedAt).getTime() < 12 * 60 * 60 * 1000;
 }
 
+function isExternal(src: string) {
+  return src.includes("pollinations.ai") || src.includes("unsplash.com") || src.includes("loremflickr.com");
+}
+
 function PostImage({ src, alt, priority = false, sizes }: { src: string; alt: string; priority?: boolean; sizes: string }) {
   const [error, setError] = useState(false);
   if (error || !src) {
@@ -34,6 +38,7 @@ function PostImage({ src, alt, priority = false, sizes }: { src: string; alt: st
       fill
       priority={priority}
       loading={priority ? undefined : "lazy"}
+      unoptimized={isExternal(src)}
       className="object-cover transition-transform duration-500 group-hover:scale-105"
       sizes={sizes}
       onError={() => setError(true)}
