@@ -9,6 +9,7 @@ import { Newsletter } from "@/components/Newsletter";
 import { BackToTop } from "@/components/BackToTop";
 import { getPublishedPosts, POSTS_PER_PAGE } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
+import { buildPageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -16,25 +17,60 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.verc
 const SITE_NAME = "Trendly";
 const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { posts } = await getPublishedPosts({ page: 1 });
+type HomeSearchParams = { category?: string; tag?: string; q?: string; page?: string };
+
+function buildCanonicalSearchUrl(searchParams: HomeSearchParams) {
+  const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
+  const params = new URLSearchParams();
+  if (searchParams.category) params.set("category", searchParams.category);
+  if (searchParams.tag) params.set("tag", searchParams.tag);
+  if (searchParams.q) params.set("q", searchParams.q);
+  if (page > 1) params.set("page", String(page));
+  const qs = params.toString();
+  return `${SITE_URL}${qs ? `/?${qs}` : "/"}`;
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: HomeSearchParams }): Promise<Metadata> {
+  const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
+  const categoryLabel = searchParams.category ? searchParams.category.replace(/-/g, " ") : undefined;
+  const tagLabel = searchParams.tag ? searchParams.tag.replace(/-/g, " ") : undefined;
+
+  let title = `${SITE_NAME} — Technology, AI & Ideas`;
+  let description = SITE_DESCRIPTION;
+
+  if (searchParams.q) {
+    title = `Search results for "${searchParams.q}" | ${SITE_NAME}`;
+    description = `Browse Trendly articles matching "${searchParams.q}" on AI, technology, startups, and digital trends.`;
+  } else if (categoryLabel) {
+    title = `${categoryLabel} articles | ${SITE_NAME}`;
+    description = `Latest ${categoryLabel} articles from Trendly — AI-powered news, analysis, and opinion on ${categoryLabel}.`;
+  } else if (tagLabel) {
+    title = `Posts tagged ${tagLabel} | ${SITE_NAME}`;
+    description = `Explore Trendly articles tagged ${tagLabel} for fresh insights on AI, technology, and digital trends.`;
+  }
+
+  if (page > 1) {
+    title = `Page ${page} · ${title}`;
+    description = `Page ${page} of results. ${description}`;
+  }
+
+  const canonicalUrl = buildCanonicalSearchUrl(searchParams);
+  const { posts } = await getPublishedPosts({ category: searchParams.category, tag: searchParams.tag, q: searchParams.q, page });
   const latest = posts[0];
-  return {
-    alternates: { canonical: SITE_URL, types: { "application/rss+xml": `${SITE_URL}/feed.xml` } },
-    openGraph: {
-      url: SITE_URL, type: "website", locale: "en_US", siteName: SITE_NAME,
-      title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION,
-      images: latest?.cover_image
-        ? [{ url: latest.cover_image, width: 1600, height: 900, alt: latest.title }]
-        : [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }]
-    }
-  };
+
+  return buildPageMetadata({
+    title,
+    description,
+    url: canonicalUrl,
+    keywords: ["technology", "AI", "trendly", "news", "analysis"],
+    imageUrl: latest?.cover_image ?? undefined,
+  });
 }
 
 export default async function Home({
   searchParams
 }: {
-  searchParams: Promise<{ category?: string; tag?: string; q?: string; page?: string }>;
+  searchParams: Promise<HomeSearchParams>;
 }) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10));

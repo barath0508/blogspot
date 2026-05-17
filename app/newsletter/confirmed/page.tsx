@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Subscription Confirmed",
-  robots: { index: false, follow: false }
-};
+  description: "Your newsletter subscription is confirmed. Enjoy the latest Trendly articles delivered straight to your inbox.",
+  url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app"}/newsletter/confirmed`,
+  noindex: true,
+});
 
 export default function NewsletterConfirmed() {
   return (

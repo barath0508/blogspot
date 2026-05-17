@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
 const CONTACT_EMAIL = "hello@trendly.com";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Privacy Policy",
   description: `Privacy Policy for ${SITE_NAME} — how we collect, use, and protect your personal information.`,
-  alternates: { canonical: `${SITE_URL}/privacy-policy` },
-  robots: { index: true, follow: true },
-};
+  url: `${SITE_URL}/privacy-policy`,
+  keywords: ["privacy policy", "data protection", "Trendly", "cookies"],
+});
 
 export default function PrivacyPolicy() {
   return (

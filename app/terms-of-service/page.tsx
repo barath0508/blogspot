@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
 const CONTACT_EMAIL = "hello@trendly.com";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Terms of Service",
   description: `Terms of Service for ${SITE_NAME} — the rules and guidelines for using our website.`,
-  alternates: { canonical: `${SITE_URL}/terms-of-service` },
-  robots: { index: true, follow: true },
-};
+  url: `${SITE_URL}/terms-of-service`,
+  keywords: ["terms of service", "legal", "Trendly", "user agreement"],
+});
 
 export default function TermsOfService() {
   return (

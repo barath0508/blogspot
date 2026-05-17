@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/PostCard";
 import { getPublishedPosts } from "@/lib/posts";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 const SITE_NAME = "Trendly";
@@ -19,19 +20,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = `Find the latest Trendly articles tagged ${tagName}.`;
   const url = `${SITE_URL}/tag/${slug}`;
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: SITE_NAME,
-      type: "website",
-      images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: title }]
-    }
-  };
+    url,
+    keywords: [tagName, "Trendly", "technology", "AI", "articles"],
+    imageUrl: `${SITE_URL}/og-default.png`,
+  });
 }
 
 export default async function TagPage({ params }: Props) {

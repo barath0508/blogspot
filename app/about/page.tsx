@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Rss, Mail } from "lucide-react";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
 const CONTACT_EMAIL = "hello@trendly.com";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "About Us",
   description: `Learn about ${SITE_NAME} — our mission, editorial process, and the technology behind our AI-powered publication.`,
-  alternates: { canonical: `${SITE_URL}/about` },
-  robots: { index: true, follow: true },
-};
+  url: `${SITE_URL}/about`,
+  keywords: ["about", "Trendly", "technology", "AI", "editorial"],
+});
 
 export default function About() {
   return (

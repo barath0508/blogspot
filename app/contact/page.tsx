@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, Rss } from "lucide-react";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
 const CONTACT_EMAIL = "hello@trendly.com";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Contact Us",
   description: `Get in touch with the ${SITE_NAME} team. We welcome feedback, corrections, and partnership inquiries.`,
-  alternates: { canonical: `${SITE_URL}/contact` },
-  robots: { index: true, follow: true },
-};
+  url: `${SITE_URL}/contact`,
+  keywords: ["contact", "Trendly", "feedback", "support", "press"],
+});
 
 export default function Contact() {
   return (

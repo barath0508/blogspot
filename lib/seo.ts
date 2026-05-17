@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 type GenerateSeoOptions = {
   title: string;
   excerpt?: string | null;
@@ -5,6 +7,16 @@ type GenerateSeoOptions = {
   meta_title?: string | null;
   meta_description?: string | null;
   seo_keywords?: string[] | string | null;
+};
+
+type BuildPageMetadataOptions = {
+  title: string;
+  description: string;
+  url: string;
+  imageUrl?: string;
+  keywords?: string[];
+  noindex?: boolean;
+  type?: "website" | "article" | "profile" | "book";
 };
 
 const STOP_WORDS = new Set([
@@ -117,4 +129,34 @@ export async function pingIndexNow(slug: string): Promise<void> {
       })
     )
   );
+}
+
+export function buildPageMetadata(options: BuildPageMetadataOptions): Metadata {
+  const imageUrl = options.imageUrl ?? `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app"}/og-default.png`;
+  const metadataType = options.type ?? "website";
+
+  return {
+    title: options.title,
+    description: options.description,
+    keywords: options.keywords ?? ["technology", "AI", "news", "analysis", "Trendly"],
+    alternates: { canonical: options.url },
+    robots: { index: !options.noindex, follow: true },
+    openGraph: {
+      title: options.title,
+      description: options.description,
+      url: options.url,
+      siteName: "Trendly",
+      type: metadataType,
+      locale: "en_US",
+      images: [{ url: imageUrl, alt: options.title, width: 1200, height: 630 }]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: options.title,
+      description: options.description,
+      images: [imageUrl],
+      site: "@trendly",
+      creator: "@trendly"
+    }
+  };
 }

@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SITE_NAME = "Trendly";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
 const CONTACT_EMAIL = "hello@trendly.com";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Disclaimer",
   description: `Disclaimer for ${SITE_NAME} — important information about our AI-generated content and editorial policies.`,
-  alternates: { canonical: `${SITE_URL}/disclaimer` },
-  robots: { index: true, follow: true },
-};
+  url: `${SITE_URL}/disclaimer`,
+  keywords: ["disclaimer", "AI content", "Trendly", "terms"],
+});
 
 export default function Disclaimer() {
   return (
