@@ -13,6 +13,7 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { BackToTop } from "@/components/BackToTop";
 import { ViewCounter } from "@/components/ViewCounter";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { AdSenseAd } from "@/components/AdSenseAd";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
@@ -211,6 +212,8 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
         )}
+
+        <AdSenseAd slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID ?? ""} className="mx-auto max-w-3xl" />
 
         {/* ── Body: content + sidebar ── */}
         <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-14 items-start pb-20">

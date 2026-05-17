@@ -3,22 +3,71 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+const COOKIE_CONSENT_KEY = "cookie_consent";
+
+interface CookieConsent {
+  accepted: boolean;
+  analytics: boolean;
+  ads: boolean;
+  updatedAt: string;
+}
+
+function parseConsent(): CookieConsent | null {
+  if (typeof window === "undefined") return null;
+  const stored = window.localStorage.getItem(COOKIE_CONSENT_KEY);
+  if (!stored) return null;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (typeof parsed === "object" && parsed !== null && "accepted" in parsed) {
+      return parsed as CookieConsent;
+    }
+  } catch {
+    if (stored === "accepted") {
+      return { accepted: true, analytics: true, ads: true, updatedAt: new Date().toISOString() };
+    }
+    if (stored === "declined") {
+      return { accepted: true, analytics: false, ads: false, updatedAt: new Date().toISOString() };
+    }
+  }
+
+  return null;
+}
+
+function notifyConsentUpdated() {
+  window.dispatchEvent(new Event("cookie-consent-updated"));
+}
+
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookie_consent");
+    const consent = parseConsent();
     if (!consent) setVisible(true);
   }, []);
 
-  const accept = () => {
-    localStorage.setItem("cookie_consent", "accepted");
+  const acceptAll = () => {
+    const consent: CookieConsent = {
+      accepted: true,
+      analytics: true,
+      ads: true,
+      updatedAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
     setVisible(false);
+    notifyConsentUpdated();
   };
 
-  const decline = () => {
-    localStorage.setItem("cookie_consent", "declined");
+  const rejectNonEssential = () => {
+    const consent: CookieConsent = {
+      accepted: true,
+      analytics: false,
+      ads: false,
+      updatedAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
     setVisible(false);
+    notifyConsentUpdated();
   };
 
   if (!visible) return null;
@@ -31,24 +80,24 @@ export function CookieBanner() {
             <p className="text-sm font-semibold text-foreground mb-1">We use cookies 🍪</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
               We use cookies to improve your experience, analyze traffic, and serve personalized ads.
-              By clicking "Accept", you consent to our use of cookies.{" "}
+              Choose "Accept all" to enable analytics and ads, or "Reject non-essential" to disable them.
               <Link href="/cookie-policy" className="text-primary hover:underline underline-offset-2">
                 Learn more
               </Link>
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center shrink-0">
             <button
-              onClick={decline}
+              onClick={rejectNonEssential}
               className="rounded-lg border border-border px-4 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
-              Decline
+              Reject non-essential
             </button>
             <button
-              onClick={accept}
+              onClick={acceptAll}
               className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Accept All
+              Accept all
             </button>
           </div>
         </div>
