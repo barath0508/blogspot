@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 import { PostRecord } from "@/types/blog";
+
+const SITE_NAME = "Trendly";
 
 type Props = { post: PostRecord; index?: number; featured?: boolean };
 
@@ -12,6 +16,29 @@ function readTime(content: string) {
 function isNew(publishedAt: string | null) {
   if (!publishedAt) return false;
   return Date.now() - new Date(publishedAt).getTime() < 12 * 60 * 60 * 1000;
+}
+
+function PostImage({ src, alt, priority = false, sizes }: { src: string; alt: string; priority?: boolean; sizes: string }) {
+  const [error, setError] = useState(false);
+  if (error || !src) {
+    return (
+      <div className="absolute inset-0 bg-secondary flex items-center justify-center">
+        <span className="font-serif text-3xl font-bold text-muted-foreground/30">T</span>
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      priority={priority}
+      loading={priority ? undefined : "lazy"}
+      className="object-cover transition-transform duration-500 group-hover:scale-105"
+      sizes={sizes}
+      onError={() => setError(true)}
+    />
+  );
 }
 
 function FeaturedCard({ post }: { post: PostRecord }) {
@@ -26,23 +53,8 @@ function FeaturedCard({ post }: { post: PostRecord }) {
     <article className="group relative overflow-hidden rounded-lg border border-border/40 bg-card transition-all hover:border-primary/40">
       <Link href={`/blog/${post.slug}`} className="block">
         <div className="grid gap-0 lg:grid-cols-2">
-          {/* Image */}
           <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full">
-            {post.cover_image ? (
-              <Image
-                src={post.cover_image}
-                alt={post.title}
-                fill
-                unoptimized
-                priority
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-secondary flex items-center justify-center">
-                <span className="font-serif text-4xl font-bold text-muted-foreground/30">ID</span>
-              </div>
-            )}
+            <PostImage src={post.cover_image ?? ""} alt={post.title} priority sizes="(max-width: 1024px) 100vw, 50vw" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent lg:hidden" />
             {fresh && (
               <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground">
@@ -55,7 +67,6 @@ function FeaturedCard({ post }: { post: PostRecord }) {
             )}
           </div>
 
-          {/* Content */}
           <div className="flex flex-col justify-center p-6 lg:p-10">
             <div className="mb-4 flex items-center gap-3">
               {category && (
@@ -77,16 +88,18 @@ function FeaturedCard({ post }: { post: PostRecord }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 font-serif text-xs font-bold text-primary">
-                  ID
+                  T
                 </div>
                 <div className="text-xs">
-                  <p className="font-medium text-foreground">Insight Daily</p>
+                  <p className="font-medium text-foreground">{SITE_NAME}</p>
                   <p className="text-muted-foreground">{dateStr} · {time} min read</p>
                 </div>
               </div>
               <span className="flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:text-primary/80">
                 Read article
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
               </span>
             </div>
           </div>
@@ -111,23 +124,12 @@ function GridCard({ post, index = 0 }: { post: PostRecord; index?: number }) {
       style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       <Link href={`/blog/${post.slug}`} className="flex flex-col flex-1">
-        {/* Image */}
-        <div className="relative aspect-[16/10] overflow-hidden">
-          {post.cover_image ? (
-            <Image
-              src={post.cover_image}
-              alt={post.title}
-              fill
-              unoptimized
-              loading="lazy"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-secondary flex items-center justify-center">
-              <span className="font-serif text-3xl font-bold text-muted-foreground/30">ID</span>
-            </div>
-          )}
+        <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
+          <PostImage
+            src={post.cover_image ?? ""}
+            alt={post.title}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
           {fresh && (
             <span className="absolute top-3 left-3 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
               New
@@ -135,7 +137,6 @@ function GridCard({ post, index = 0 }: { post: PostRecord; index?: number }) {
           )}
         </div>
 
-        {/* Content */}
         <div className="flex flex-1 flex-col p-5">
           <div className="mb-3 flex items-center gap-2">
             {category && (
@@ -156,10 +157,10 @@ function GridCard({ post, index = 0 }: { post: PostRecord; index?: number }) {
 
           <div className="flex items-center gap-2 pt-2 border-t border-border/40">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 font-serif text-[10px] font-bold text-primary">
-              ID
+              T
             </div>
             <div className="text-xs">
-              <span className="font-medium text-foreground">Insight Daily</span>
+              <span className="font-medium text-foreground">{SITE_NAME}</span>
               <span className="text-muted-foreground"> · </span>
               <time dateTime={isoDate} className="text-muted-foreground">{dateStr}</time>
             </div>

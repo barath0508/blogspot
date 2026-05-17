@@ -20,6 +20,8 @@ const SITE_NAME = "Trendly";
 
 type Props = { params: Promise<{ slug: string }> };
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   const posts = await getPublishedPosts();
   return posts.map((post) => ({ slug: post.slug }));
@@ -189,7 +191,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Cover image */}
           {post.cover_image && (
             <div className="relative mb-10 aspect-video overflow-hidden rounded-xl">
-              <Image src={post.cover_image} alt={post.title} fill unoptimized className="object-cover" priority sizes="(max-width: 1024px) 100vw, 900px" />
+              <Image src={post.cover_image} alt={post.title} fill className="object-cover" priority sizes="(max-width: 1024px) 100vw, 900px" />
             </div>
           )}
 
@@ -202,7 +204,7 @@ export default async function BlogPostPage({ params }: Props) {
                   components={{
                     img: ({ src, alt }) => (
                       <span className="block relative w-full my-10" style={{ aspectRatio: "16/9" }}>
-                        <Image src={String(src ?? "")} alt={String(alt ?? "")} fill unoptimized className="rounded-xl object-cover" loading="lazy" sizes="(max-width: 1024px) 100vw, 800px" />
+                        <Image src={String(src ?? "")} alt={String(alt ?? "")} fill className="rounded-xl object-cover" loading="lazy" sizes="(max-width: 1024px) 100vw, 800px" />
                       </span>
                     ),
                     h2: ({ children }) => <h2 className="font-serif text-2xl font-bold text-foreground mt-10 mb-4">{children}</h2>,
