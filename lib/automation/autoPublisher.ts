@@ -16,7 +16,6 @@ type GeneratedPost = {
 const ALLOWED_FETCH_HOSTS = new Set([
   "trends.google.com",
   "generativelanguage.googleapis.com",
-  "source.unsplash.com",
 ]);
 
 function assertAllowedUrl(url: string) {
@@ -124,8 +123,8 @@ You are a world-class digital journalist and content strategist known for writin
   "seoKeywords": ["string","string","string","string","string"],
   "category": "string",
   "tags": ["string","string","string"],
-  "imagePhrases": ["Unsplash search keyword for section 1","Unsplash search keyword for section 2","Unsplash search keyword for section 3"],
-  "coverImageKeyword": "single best Unsplash search keyword for the article cover image"
+  "imagePhrases": ["vivid visual description for section 1 image","vivid visual description for section 2 image","vivid visual description for section 3 image"],
+  "coverImageKeyword": "single best visual description for the article cover image"
 }
 
 Topic: "${topic}"
@@ -148,9 +147,10 @@ Content Rules:
 - End with a strong, memorable conclusion that leaves readers thinking.
 
 imagePhrases Rules:
-- Each imagePhrases entry must be a short, single-topic keyword phrase (2-4 words max) suitable for Unsplash search.
-- Use concrete, visual subjects (e.g., "futuristic technology", "city skyline night", "data analytics", "team collaboration") — NOT abstract phrases.
-- coverImageKeyword must be a single powerful, visual keyword (e.g., "innovation", "artificial intelligence", "space", "cybersecurity").
+- Each imagePhrases entry must be a vivid, specific visual description (5-10 words) that directly relates to that section's content.
+- Examples: "scientist analyzing glowing DNA strands in dark lab", "crowded stock market trading floor with screens", "futuristic robot hand shaking human hand"
+- coverImageKeyword must be a vivid 5-8 word visual description of the article's main subject.
+- Make every image description cinematic, specific, and emotionally evocative.
 - Do not include code fences around JSON.
 `;
 
@@ -225,30 +225,38 @@ imagePhrases Rules:
   } as GeneratedPost & { coverImageKeyword: string };
 }
 
-function generateImageUrl(phrase: string, width = 1600, height = 900) {
-  // Use Unsplash Source API for high-quality, topic-relevant photography.
-  // Extract the most meaningful keyword for the best image match.
-  const keyword = phrase
-    .replace(/[^a-zA-Z0-9\s]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(w => w.length > 2)
-    .slice(0, 2)
-    .join(',');
-  const safeKeyword = encodeURIComponent(keyword || 'technology');
-  // Add a cache-busting seed so each post gets a unique image
-  const seed = Math.floor(Math.random() * 1000);
-  return `https://source.unsplash.com/${width}x${height}/?${safeKeyword}&sig=${seed}`;
+function generateCoverImageUrl(title: string, category: string, keywords: string[]): string {
+  const kw = keywords.slice(0, 3).join(", ");
+  const prompt = [
+    `Professional editorial photo for article titled "${title}"`,
+    `Category: ${category}`,
+    kw ? `Keywords: ${kw}` : "",
+    "Ultra high quality, cinematic lighting, sharp focus, magazine cover style",
+    "No text, no watermark, no logos"
+  ].filter(Boolean).join(". ");
+  const seed = Date.now() % 99999;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=900&seed=${seed}&nologo=true&enhance=true`;
 }
 
-function injectSectionImages(content: string, imagePhrases: string[]): string {
+function generateSectionImageUrl(phrase: string, title: string): string {
+  const prompt = [
+    `Editorial illustration for section about "${phrase}"`,
+    `Part of article: "${title}"`,
+    "Professional photography, vibrant colors, high detail, cinematic",
+    "No text, no watermark"
+  ].join(". ");
+  const seed = Math.floor(Math.random() * 99999);
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true`;
+}
+
+function injectSectionImages(content: string, imagePhrases: string[], title: string): string {
   if (!imagePhrases.length) return content;
   let phraseIndex = 0;
   return content.replace(/^(## .+)$/gm, (heading) => {
     if (phraseIndex >= imagePhrases.length) return heading;
-    const imageUrl = generateImageUrl(imagePhrases[phraseIndex++], 1200, 630);
-    const altText = imagePhrases[phraseIndex - 1];
-    return `${heading}\n\n![${altText}](${imageUrl})\n`;
+    const phrase = imagePhrases[phraseIndex++];
+    const imageUrl = generateSectionImageUrl(phrase, title);
+    return `${heading}\n\n![${phrase}](${imageUrl})\n`;
   });
 }
 
@@ -317,10 +325,8 @@ export async function publishTrendingPost() {
     return { status: "skipped", reason: "already_published", topic, slug };
   }
 
-  // Use the AI-suggested coverImageKeyword for a highly relevant cover photo
-  const coverKeyword = (post as any).coverImageKeyword || topic;
-  const coverImage = generateImageUrl(coverKeyword);
-  const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases);
+  const coverImage = generateCoverImageUrl(post.title, post.category, post.seoKeywords);
+  const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases, post.title);
   const contentWithLinks = await appendInternalLinks(contentWithSectionImages, topic);
   const { data: created, error } = await supabaseAdmin
     .from("posts")
