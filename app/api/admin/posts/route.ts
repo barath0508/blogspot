@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { generateSeoMetadata, pingSearchEngines } from "@/lib/seo";
+import { generateSeoMetadata, pingSearchEngines, pingIndexNow } from "@/lib/seo";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -28,7 +28,10 @@ export async function POST(request: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  if (is_published) pingSearchEngines();
+  if (is_published) {
+    pingSearchEngines();
+    pingIndexNow(slug);
+  }
 
   return NextResponse.json({ id: data.id });
 }

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { generateSeoMetadata, pingSearchEngines } from "@/lib/seo";
+import { generateSeoMetadata, pingSearchEngines, pingIndexNow } from "@/lib/seo";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
@@ -37,7 +37,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  if (body.is_published) pingSearchEngines();
+  if (body.is_published) {
+    pingSearchEngines();
+    pingIndexNow(body.slug);
+  }
 
   return NextResponse.json({ ok: true });
 }

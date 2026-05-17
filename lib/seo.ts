@@ -80,3 +80,41 @@ export async function pingSearchEngines(): Promise<void> {
     fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`, { signal: AbortSignal.timeout(8000) })
   ]);
 }
+
+/**
+ * Submits a URL to IndexNow (Bing, Yandex, Seznam, Naver) for instant indexing.
+ * Fires-and-forgets — never throws.
+ */
+export async function pingIndexNow(slug: string): Promise<void> {
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const key = "f8d17c11209945da88ec4617d4cec8fb";
+  if (!base) return;
+
+  const url = `${base}/blog/${slug}`;
+
+  // IndexNow supports multiple search engines — ping all at once
+  const endpoints = [
+    "https://api.indexnow.org/indexnow",
+    "https://www.bing.com/indexnow",
+    "https://search.seznam.cz/indexnow",
+    "https://yandex.com/indexnow"
+  ];
+
+  const body = JSON.stringify({
+    host: new URL(base).hostname,
+    key,
+    keyLocation: `${base}/${key}.txt`,
+    urlList: [url]
+  });
+
+  await Promise.allSettled(
+    endpoints.map((endpoint) =>
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body,
+        signal: AbortSignal.timeout(8000)
+      })
+    )
+  );
+}

@@ -1,5 +1,5 @@
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { pingSearchEngines } from "@/lib/seo";
+import { pingSearchEngines, pingIndexNow } from "@/lib/seo";
 
 type GeneratedPost = {
   title: string;
@@ -356,5 +356,6 @@ export async function publishTrendingPost() {
   }
 
   pingSearchEngines();
+  pingIndexNow(slug);
   return { status: "published", topic, slug, postId: created.id };
 }
