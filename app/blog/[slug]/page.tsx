@@ -11,6 +11,7 @@ import { ReadingProgress } from "@/components/ReadingProgress";
 import { ShareButtons } from "@/components/ShareButtons";
 import { TableOfContents } from "@/components/TableOfContents";
 import { BackToTop } from "@/components/BackToTop";
+import { ViewCounter } from "@/components/ViewCounter";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
@@ -23,7 +24,7 @@ type Props = { params: Promise<{ slug: string }> };
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const posts = await getPublishedPosts();
+  const { posts } = await getPublishedPosts();
   return posts.map((post) => ({ slug: post.slug }));
 }
 
@@ -76,7 +77,7 @@ export default async function BlogPostPage({ params }: Props) {
     firstTag ? getPublishedPosts({ tag: firstTag }) : getPublishedPosts()
   ]);
 
-  const relatedPosts = (relatedAll ?? []).filter((p) => p.slug !== post.slug).slice(0, 3);
+  const relatedPosts = ((relatedAll as any).posts ?? relatedAll ?? []).filter((p: any) => p.slug !== post.slug).slice(0, 3);
   const wordCount = (post.content ?? "").trim().split(/\s+/).length;
   const readTime = Math.max(1, Math.round(wordCount / 200));
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
@@ -122,6 +123,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-background">
       <ReadingProgress />
+      <ViewCounter slug={post.slug} />
       <Script id="article-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
 
       <main className="mx-auto max-w-3xl px-4 lg:px-8 py-8">

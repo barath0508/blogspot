@@ -6,7 +6,7 @@ const SITE_NAME = "Trendly";
 export const revalidate = 3600;
 
 export async function GET() {
-  const posts = await getPublishedPosts();
+  const { posts } = await getPublishedPosts();
 
   // Google News sitemap only accepts articles published in the last 2 days
   const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;

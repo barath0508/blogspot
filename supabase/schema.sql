@@ -136,3 +136,13 @@ drop policy if exists "Public can insert subscribers" on subscribers;
 create policy "Public can insert subscribers"
 on subscribers for insert
 with check (char_length(email) > 3);
+
+-- View count
+alter table posts add column if not exists view_count bigint not null default 0;
+
+create or replace function increment_view_count(post_slug text)
+returns void as $$
+begin
+  update posts set view_count = view_count + 1 where slug = post_slug and is_published = true;
+end;
+$$ language plpgsql security definer;

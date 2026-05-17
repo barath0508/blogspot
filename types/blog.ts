@@ -12,6 +12,7 @@ export type PostRecord = {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  view_count: number;
   categories: { slug: string; name: string }[];
   tags: { slug: string; name: string }[];
 };

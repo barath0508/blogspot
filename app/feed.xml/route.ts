@@ -33,7 +33,7 @@ function markdownToHtml(md: string): string {
 }
 
 export async function GET() {
-  const posts = await getPublishedPosts();
+  const { posts } = await getPublishedPosts();
 
   const items = posts
     .slice(0, 50)
