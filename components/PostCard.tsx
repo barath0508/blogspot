@@ -75,9 +75,9 @@ function FeaturedCard({ post }: { post: PostRecord }) {
           <div className="flex flex-col justify-center p-6 lg:p-10">
             <div className="mb-4 flex items-center gap-3">
               {category && (
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <Link href={`/category/${category.slug}`} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors">
                   {category.name}
-                </span>
+                </Link>
               )}
               <span className="text-xs text-muted-foreground">Featured</span>
             </div>
@@ -145,9 +145,9 @@ function GridCard({ post, index = 0 }: { post: PostRecord; index?: number }) {
         <div className="flex flex-1 flex-col p-5">
           <div className="mb-3 flex items-center gap-2">
             {category && (
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+              <Link href={`/category/${category.slug}`} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors">
                 {category.name}
-              </span>
+              </Link>
             )}
             <span className="text-xs text-muted-foreground">{time} min read</span>
           </div>

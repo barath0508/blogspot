@@ -24,8 +24,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-0 h-full w-72 bg-background border-l border-border/40 flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
-              <Link href="/" onClick={() => setOpen(false)} className="font-serif text-lg font-bold text-foreground">
-                The Chronicle
+              <Link href="/" onClick={() => setOpen(false)}>
+                <span className="font-serif text-lg font-bold tracking-tight text-foreground">Trendly</span>
               </Link>
               <button onClick={() => setOpen(false)} aria-label="Close menu"
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">

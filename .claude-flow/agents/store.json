@@ -103,6 +103,22 @@
       "createdAt": "2026-05-16T13:10:47.959Z",
       "model": "sonnet",
       "modelRoutedBy": "default"
+    },
+    "agent-1779030020191-zltr2o": {
+      "agentId": "agent-1779030020191-zltr2o",
+      "agentType": "coder",
+      "status": "active",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic",
+        "task": "Fix the project, add necessary features, repair broken code, and ensure the site builds and runs properly.",
+        "autoTools": true
+      },
+      "createdAt": "2026-05-17T15:00:20.199Z",
+      "model": "sonnet",
+      "modelRoutedBy": "router",
+      "currentTask": "task-1779030125955-3eb5nt"
     }
   },
   "version": "3.0.0"

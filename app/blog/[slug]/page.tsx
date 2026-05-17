@@ -140,7 +140,7 @@ export default async function BlogPostPage({ params }: Props) {
           {category && (
             <>
               <span className="text-border">/</span>
-              <Link href={`/?category=${category.slug}`} className="hover:text-foreground transition-colors">{category.name}</Link>
+              <Link href={`/category/${category.slug}`} className="hover:text-foreground transition-colors">{category.name}</Link>
             </>
           )}
           <span className="text-border">/</span>
@@ -158,7 +158,7 @@ export default async function BlogPostPage({ params }: Props) {
               </Link>
             )}
             {post.tags?.slice(0, 3).map((tag) => (
-              <Link key={tag.slug} href={`/?tag=${tag.slug}`}
+              <Link key={tag.slug} href={`/tag/${tag.slug}`}
                 className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
                 #{tag.name}
               </Link>
