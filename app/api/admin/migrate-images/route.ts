@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const newContent = (post.content ?? "")
       .replace(
         /!\[([^\]]*)\]\(https:\/\/source\.unsplash\.com[^)]+\)/g,
-        (_, alt) => {
+        (_: string, alt: string) => {
           const phrase = alt || post.title;
           const seed = Math.floor(Math.random() * 99999);
           const prompt = `Editorial illustration for "${phrase}", professional photography, cinematic, no text`;
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       )
       .replace(
         /!\[([^\]]*)\]\(https:\/\/loremflickr\.com[^)]+\)/g,
-        (_, alt) => {
+        (_: string, alt: string) => {
           const seed = Math.floor(Math.random() * 99999);
           const prompt = `Editorial illustration for "${alt || post.title}", professional photography, cinematic, no text`;
           return `![${alt}](https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true)`;

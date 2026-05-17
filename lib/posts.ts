@@ -17,23 +17,23 @@ export async function getPublishedPosts(params?: {
   const from = (page - 1) * POSTS_PER_PAGE;
   const to = from + POSTS_PER_PAGE - 1;
 
-  let categoryPostIds: string[] | null = null;
+  const categoryPostIds: string[] = [];
   if (params?.category) {
     const { data: cats } = await supabase
       .from("post_categories")
       .select("post_id, categories!inner(slug)")
       .eq("categories.slug", params.category);
-    categoryPostIds = (cats ?? []).map((r: any) => r.post_id);
+    categoryPostIds.push(...(cats ?? []).map((r: any) => r.post_id));
     if (categoryPostIds.length === 0) return { posts: [], total: 0 };
   }
 
-  let tagPostIds: string[] | null = null;
+  const tagPostIds: string[] = [];
   if (params?.tag) {
     const { data: tags } = await supabase
       .from("post_tags")
       .select("post_id, tags!inner(slug)")
       .eq("tags.slug", params.tag);
-    tagPostIds = (tags ?? []).map((r: any) => r.post_id);
+    tagPostIds.push(...(tags ?? []).map((r: any) => r.post_id));
     if (tagPostIds.length === 0) return { posts: [], total: 0 };
   }
 
@@ -44,8 +44,8 @@ export async function getPublishedPosts(params?: {
     .order("published_at", { ascending: false })
     .range(from, to);
 
-  if (categoryPostIds) query = query.in("id", categoryPostIds);
-  if (tagPostIds) query = query.in("id", tagPostIds);
+  if (categoryPostIds.length > 0) query = query.in("id", categoryPostIds);
+  if (tagPostIds.length > 0) query = query.in("id", tagPostIds);
   if (params?.q) {
     const term = params.q.trim();
     query = query.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%`);

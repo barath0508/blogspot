@@ -70,14 +70,15 @@ export default async function BlogPostPage({ params }: Props) {
   const supabase = getSupabase();
   const firstTag = post.tags?.[0]?.slug;
 
-  const [{ data: comments }, { count }, relatedAll] = await Promise.all([
+  const [{ data: comments }, { count }, relatedAllResult] = await Promise.all([
     supabase.from("comments").select("id,author_name,body,created_at")
       .eq("post_id", post.id).eq("is_approved", true).order("created_at", { ascending: false }),
     supabase.from("post_likes").select("id", { head: true, count: "exact" }).eq("post_id", post.id),
     firstTag ? getPublishedPosts({ tag: firstTag }) : getPublishedPosts()
   ]);
 
-  const relatedPosts = ((relatedAll as any).posts ?? relatedAll ?? []).filter((p: any) => p.slug !== post.slug).slice(0, 3);
+  const { posts: relatedAll } = relatedAllResult;
+  const relatedPosts = relatedAll.filter((p) => p.slug !== post.slug).slice(0, 3);
   const wordCount = (post.content ?? "").trim().split(/\s+/).length;
   const readTime = Math.max(1, Math.round(wordCount / 200));
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
