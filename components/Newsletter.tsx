@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Mail, Check } from "lucide-react";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,7 @@ export function Newsletter() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) { setStatus("success"); setEmail(""); }
+      if (res.ok) { setStatus("success"); setEmail(""); router.push("/newsletter/confirmed"); }
       else { setStatus("idle"); alert("Failed to subscribe. Please try again."); }
     } catch { setStatus("idle"); alert("Network error. Please try again."); }
   };

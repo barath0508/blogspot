@@ -7,6 +7,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MobileNav } from "@/components/MobileNav";
+import { TrendlyLogo } from "@/components/TrendlyLogo";
+import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -222,6 +224,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </footer>
 
         </ThemeProvider>
+        <CookieBanner />
         <Analytics />
         <SpeedInsights />
       </body>
