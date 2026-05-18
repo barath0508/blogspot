@@ -168,8 +168,8 @@ imagePhrases Rules:
 
   outer: for (const model of modelsToTry) {
     for (const apiKey of apiKeys) {
-      // ✅ FIXED: changed v1beta → v1
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
+      // ✅ FIXED: changed v1 back to v1beta because responseMimeType is required for JSON output
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       assertAllowedUrl(geminiUrl);
 
       const response = await fetch(geminiUrl, {
