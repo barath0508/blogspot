@@ -81,7 +81,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      topic,
       ...result
     });
   } catch (error: any) {
