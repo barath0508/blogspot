@@ -311,8 +311,7 @@ ${links.join("\n")}
 `;
 }
 
-export async function publishTrendingPost() {
-  const topic = await fetchTrendingTopic();
+export async function publishSpecificTopic(topic: string) {
   const post = await generatePostWithGemini(topic);
   const supabaseAdmin = getSupabaseAdmin();
 
@@ -364,4 +363,9 @@ export async function publishTrendingPost() {
   pingSearchEngines();
   pingIndexNow(slug);
   return { status: "published", topic, slug, postId: created.id };
+}
+
+export async function publishTrendingPost() {
+  const topic = await fetchTrendingTopic();
+  return publishSpecificTopic(topic);
 }

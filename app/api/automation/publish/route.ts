@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { publishTrendingPost } from "@/lib/automation/autoPublisher";
+import { publishTrendingPost, publishSpecificTopic } from "@/lib/automation/autoPublisher";
 import { timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
@@ -59,4 +59,36 @@ export async function GET(request: Request) {
   const failed = results.filter((r) => r.status === "failed").length;
 
   return NextResponse.json({ published, skipped, failed, results });
+}
+
+export async function POST(request: Request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const { topic } = body;
+
+    if (!topic || typeof topic !== "string") {
+      return NextResponse.json(
+        { error: "Missing or invalid 'topic' in request body" },
+        { status: 400 }
+      );
+    }
+
+    const result = await publishSpecificTopic(topic);
+
+    return NextResponse.json({
+      success: true,
+      topic,
+      ...result
+    });
+  } catch (error: any) {
+    console.error("publish-topic error:", error);
+    return NextResponse.json(
+      { error: "Internal server error", details: error.message },
+      { status: 500 }
+    );
+  }
 }
