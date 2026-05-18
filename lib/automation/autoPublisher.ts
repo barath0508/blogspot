@@ -106,8 +106,17 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
   const rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || "";
   const apiKeys = rawKeys.split(",").map(k => k.trim()).filter(Boolean);
   if (!apiKeys.length) throw new Error("No Gemini API keys found in environment.");
+
   const configuredModel = process.env.GEMINI_MODEL?.trim();
-  const defaultModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro-latest", "gemini-pro"];
+
+  // ✅ FIXED: removed deprecated gemini-1.5-pro-latest and gemini-pro
+  const defaultModels = [
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+  ];
+
   const modelsToTry = configuredModel
     ? [configuredModel, ...defaultModels.filter(m => m !== configuredModel)]
     : defaultModels;
@@ -159,33 +168,38 @@ imagePhrases Rules:
 
   outer: for (const model of modelsToTry) {
     for (const apiKey of apiKeys) {
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      // ✅ FIXED: changed v1beta → v1
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
       assertAllowedUrl(geminiUrl);
-      const response = await fetch(
-        geminiUrl,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.7,
-              responseMimeType: "application/json"
-            }
-          })
-        }
-      );
+
+      const response = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 8192, // ✅ FIXED: prevent truncation on long articles
+            responseMimeType: "application/json",
+          },
+        }),
+      });
 
       if (!response.ok) {
         lastError = await response.text();
-        const isKeyError = response.status === 429 || response.status === 403 || lastError.includes("API_KEY_INVALID") || lastError.includes("API key expired");
-        
+        const isKeyError =
+          response.status === 429 ||
+          response.status === 403 ||
+          lastError.includes("API_KEY_INVALID") ||
+          lastError.includes("API key expired");
+
         if (isKeyError) {
           // Rate limit / Quota exceeded / Expired Key -> try the next key
           console.warn(`[AutoPublisher] Key error (${response.status}) on model ${model}. Trying next key...`);
           continue;
         }
-        // Other errors (e.g., 400 Bad Request, 500) -> likely model or prompt issue, try next model
+        // Other errors (e.g., 400 Bad Request, 404 model not found) -> try next model
+        console.warn(`[AutoPublisher] Model error (${response.status}) on model ${model}. Trying next model...`);
         break;
       }
 
@@ -221,7 +235,7 @@ imagePhrases Rules:
       .map((p: string) => String(p).trim())
       .filter(Boolean)
       .slice(0, 4),
-    coverImageKeyword: String((parsed as any).coverImageKeyword || parsed.category || "technology").trim()
+    coverImageKeyword: String((parsed as any).coverImageKeyword || parsed.category || "technology").trim(),
   } as GeneratedPost & { coverImageKeyword: string };
 }
 
@@ -232,8 +246,10 @@ function generateCoverImageUrl(title: string, category: string, keywords: string
     `Category: ${category}`,
     kw ? `Keywords: ${kw}` : "",
     "Ultra high quality, cinematic lighting, sharp focus, magazine cover style",
-    "No text, no watermark, no logos"
-  ].filter(Boolean).join(". ");
+    "No text, no watermark, no logos",
+  ]
+    .filter(Boolean)
+    .join(". ");
   const seed = Date.now() % 99999;
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=900&seed=${seed}&nologo=true&enhance=true`;
 }
@@ -243,7 +259,7 @@ function generateSectionImageUrl(phrase: string, title: string): string {
     `Editorial illustration for section about "${phrase}"`,
     `Part of article: "${title}"`,
     "Professional photography, vibrant colors, high detail, cinematic",
-    "No text, no watermark"
+    "No text, no watermark",
   ].join(". ");
   const seed = Math.floor(Math.random() * 99999);
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true`;
@@ -284,7 +300,10 @@ async function upsertCategoryAndTags(categoryName: string, tagNames: string[]) {
       tagRows.map((tag) => tag.slug)
     );
 
-  return { categoryId: category.id as string, tagIds: (tags ?? []).map((t: { id: string }) => t.id as string) };
+  return {
+    categoryId: category.id as string,
+    tagIds: (tags ?? []).map((t: { id: string }) => t.id as string),
+  };
 }
 
 async function appendInternalLinks(content: string, currentTopic: string) {
@@ -327,6 +346,7 @@ export async function publishSpecificTopic(topic: string) {
   const coverImage = generateCoverImageUrl(post.title, post.category, post.seoKeywords);
   const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases, post.title);
   const contentWithLinks = await appendInternalLinks(contentWithSectionImages, topic);
+
   const { data: created, error } = await supabaseAdmin
     .from("posts")
     .insert([
@@ -340,8 +360,8 @@ export async function publishSpecificTopic(topic: string) {
         seo_keywords: post.seoKeywords,
         cover_image: coverImage,
         is_published: true,
-        published_at: new Date().toISOString()
-      }
+        published_at: new Date().toISOString(),
+      },
     ])
     .select("id")
     .single();
@@ -349,9 +369,10 @@ export async function publishSpecificTopic(topic: string) {
   if (error) throw error;
 
   const { categoryId, tagIds } = await upsertCategoryAndTags(post.category, post.tags);
-  await supabaseAdmin.from("post_categories").upsert([{ post_id: created.id, category_id: categoryId }], {
-    onConflict: "post_id,category_id"
-  });
+  await supabaseAdmin.from("post_categories").upsert(
+    [{ post_id: created.id, category_id: categoryId }],
+    { onConflict: "post_id,category_id" }
+  );
 
   if (tagIds.length) {
     await supabaseAdmin.from("post_tags").upsert(
@@ -362,6 +383,7 @@ export async function publishSpecificTopic(topic: string) {
 
   pingSearchEngines();
   pingIndexNow(slug);
+
   return { status: "published", topic, slug, postId: created.id };
 }
 
