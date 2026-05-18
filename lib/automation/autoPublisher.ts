@@ -109,12 +109,11 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
 
   const configuredModel = process.env.GEMINI_MODEL?.trim();
 
-  // ✅ FIXED: removed deprecated gemini-1.5-pro-latest and gemini-pro
+  // ✅ FIXED: removed gemini-1.5-flash because it doesn't exist for this API key, use gemini-flash-latest instead
   const defaultModels = [
     "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
     "gemini-2.0-flash",
-    "gemini-1.5-flash",
+    "gemini-flash-latest",
   ];
 
   const modelsToTry = configuredModel
@@ -165,10 +164,10 @@ imagePhrases Rules:
 
   let text = "";
   let lastError = "";
+  const allErrors: string[] = [];
 
   outer: for (const model of modelsToTry) {
     for (const apiKey of apiKeys) {
-      // ✅ FIXED: changed v1 back to v1beta because responseMimeType is required for JSON output
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       assertAllowedUrl(geminiUrl);
 
@@ -187,6 +186,8 @@ imagePhrases Rules:
 
       if (!response.ok) {
         lastError = await response.text();
+        allErrors.push(`[${model}] ${response.status}: ${lastError}`);
+        
         const isKeyError =
           response.status === 429 ||
           response.status === 403 ||
@@ -211,7 +212,7 @@ imagePhrases Rules:
 
   if (!text) {
     const tried = modelsToTry.join(", ");
-    throw new Error(`Gemini failed across models [${tried}] and ${apiKeys.length} key(s). Last error: ${lastError}`);
+    throw new Error(`Gemini failed across models [${tried}] and ${apiKeys.length} key(s).\nAll Errors:\n${allErrors.join('\n')}`);
   }
 
   const parsed = extractAndRepairJson(text) as GeneratedPost;
