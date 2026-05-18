@@ -33,11 +33,16 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { topic } = body;
+    let { topic, keywords } = body;
+
+    // Support the n8n payload which sends { keywords: [...] }
+    if (!topic && Array.isArray(keywords) && keywords.length > 0) {
+      topic = keywords.join(", ");
+    }
 
     if (!topic || typeof topic !== "string") {
       return NextResponse.json(
-        { error: "Missing or invalid 'topic' in request body" },
+        { error: "Missing 'topic' or 'keywords' array in request body" },
         { status: 400 }
       );
     }
