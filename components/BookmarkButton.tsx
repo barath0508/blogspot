@@ -30,6 +30,7 @@ export function BookmarkButton({
       <button
         onClick={handleClick}
         aria-label={saved ? "Remove from saved" : "Save for later"}
+        title={saved ? "Remove from saved" : "Save for later"}
         className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
           saved
             ? "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900 dark:bg-indigo-950/30 dark:text-indigo-400"

@@ -46,6 +46,7 @@ export function LikeButton({ slug, initialLikes }: Props) {
       onClick={onLike}
       disabled={busy || liked}
       aria-label={liked ? `Liked — ${likes} likes` : `Like this article — ${likes} likes`}
+      title={liked ? `Liked — ${likes} likes` : `Like this article — ${likes} likes`}
       className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
         liked
           ? "border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-400 cursor-default"

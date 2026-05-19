@@ -5,6 +5,7 @@ import Image from "next/image";
 import Script from "next/script";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { CommentsSection } from "@/components/CommentsSection";
 import { LikeButton } from "@/components/LikeButton";
 import { ReadingProgress } from "@/components/ReadingProgress";
@@ -14,6 +15,8 @@ import { BackToTop } from "@/components/BackToTop";
 import { ViewCounter } from "@/components/ViewCounter";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { AdSenseAd } from "@/components/AdSenseAd";
+import { CopyCodeButton } from "@/components/CopyCodeButton";
+import { ReadNextBar } from "@/components/ReadNextBar";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 
@@ -128,98 +131,97 @@ export default async function BlogPostPage({ params }: Props) {
       <ViewCounter slug={post.slug} />
       <Script id="article-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
 
-      <main className="mx-auto max-w-3xl px-4 lg:px-8 py-8">
-
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-8">
-          <Link href="/" className="hover:text-foreground transition-colors flex items-center gap-1">
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            Home
-          </Link>
-          {category && (
-            <>
-              <span className="text-border">/</span>
-              <Link href={`/category/${category.slug}`} className="hover:text-foreground transition-colors">{category.name}</Link>
-            </>
-          )}
-          <span className="text-border">/</span>
-          <span className="text-muted-foreground/60 line-clamp-1 max-w-[180px]">{post.title}</span>
-        </nav>
-
-        {/* ── Centered Header ── */}
-        <header className="mb-10 text-center">
-          {/* Category + tags */}
-          <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
-            {category && (
-              <Link href={`/?category=${category.slug}`}
-                className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
-                {category.name}
-              </Link>
-            )}
-            {post.tags?.slice(0, 3).map((tag) => (
-              <Link key={tag.slug} href={`/tag/${tag.slug}`}
-                className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-                #{tag.name}
-              </Link>
-            ))}
-          </div>
-
-          <h1 className="font-serif text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-5xl">
-            {post.title}
-          </h1>
-
-          <p className="mt-5 text-lg text-muted-foreground leading-relaxed mx-auto max-w-2xl">
-            {post.excerpt}
-          </p>
-
-          {/* Byline */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 border-y border-border/40 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 font-serif text-sm font-bold text-primary shrink-0">
-                T
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-foreground">{SITE_NAME} Editorial</p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <time dateTime={isoDate}>{dateStr}</time>
-                  <span>·</span>
-                  <span>{readTime} min read</span>
-                  <span>·</span>
-                  <span>{wordCount.toLocaleString()} words</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <LikeButton slug={post.slug} initialLikes={count ?? 0} />
-              <BookmarkButton slug={post.slug} withLabel />
-            </div>
-          </div>
-        </header>
-
-        {/* Cover image — contained, not full-width */}
-        {post.cover_image && (
-          <div className="relative mb-10 overflow-hidden rounded-2xl border border-border/40 shadow-sm" style={{ aspectRatio: "16/9" }}>
-            <Image
-              src={post.cover_image}
-              alt={post.title}
-              fill
-              priority
-              unoptimized
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 768px"
-            />
-          </div>
-        )}
-
-        <AdSenseAd slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID ?? ""} className="mx-auto max-w-3xl" />
-
+      <main className="mx-auto max-w-5xl px-4 lg:px-8 py-8">
+        
         {/* ── Body: content + sidebar ── */}
-        <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-14 items-start pb-20">
+        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 items-start pb-20">
 
           {/* Article content */}
           <div className="min-w-0">
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-8">
+              <Link href="/" className="hover:text-foreground transition-colors flex items-center gap-1">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Home
+              </Link>
+              {category && (
+                <>
+                  <span className="text-border">/</span>
+                  <Link href={`/category/${category.slug}`} className="hover:text-foreground transition-colors">{category.name}</Link>
+                </>
+              )}
+              <span className="text-border">/</span>
+              <span className="text-muted-foreground/60 line-clamp-1 max-w-[180px]">{post.title}</span>
+            </nav>
+
+            {/* ── Header ── */}
+            <header className="mb-8">
+              {/* Category + tags */}
+              <div className="mb-5 flex flex-wrap items-center gap-2">
+                {category && (
+                  <Link href={`/?category=${category.slug}`}
+                    className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+                    {category.name}
+                  </Link>
+                )}
+                {post.tags?.slice(0, 3).map((tag) => (
+                  <Link key={tag.slug} href={`/tag/${tag.slug}`}
+                    className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    #{tag.name}
+                  </Link>
+                ))}
+              </div>
+
+              <h1 className="font-serif text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-5xl">
+                {post.title}
+              </h1>
+
+              <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-2xl">
+                {post.excerpt}
+              </p>
+
+              {/* Byline */}
+              <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y border-border/40 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 font-serif text-sm font-bold text-primary shrink-0">
+                    T
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-foreground">{SITE_NAME} Editorial</p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <time dateTime={isoDate}>{dateStr}</time>
+                      <span>·</span>
+                      <span>{readTime} min read</span>
+                      <span>·</span>
+                      <span>{wordCount.toLocaleString()} words</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <LikeButton slug={post.slug} initialLikes={count ?? 0} />
+                  <BookmarkButton slug={post.slug} withLabel />
+                </div>
+              </div>
+            </header>
+
+            {/* Cover image — contained, not full-width */}
+            {post.cover_image && (
+              <div className="relative mb-10 overflow-hidden rounded-2xl border border-border/40 shadow-sm" style={{ aspectRatio: "16/9" }}>
+                <Image
+                  src={post.cover_image}
+                  alt={post.title}
+                  fill
+                  priority
+                  unoptimized
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 800px"
+                />
+              </div>
+            )}
+
+            <AdSenseAd slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID ?? ""} className="mb-10" />
             <article className="prose prose-base max-w-none
               prose-headings:font-serif prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
               prose-p:text-muted-foreground prose-p:leading-relaxed
@@ -232,6 +234,7 @@ export default async function BlogPostPage({ params }: Props) {
               prose-hr:border-border">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
                 components={{
                   img: ({ src, alt }) => (
                     <span className="block relative w-full my-8 overflow-hidden rounded-xl shadow-sm border border-border/40" style={{ aspectRatio: "16/9" }}>
@@ -245,6 +248,9 @@ export default async function BlogPostPage({ params }: Props) {
                         sizes="(max-width: 768px) 100vw, 560px"
                       />
                     </span>
+                  ),
+                  pre: ({ children }) => (
+                    <CopyCodeButton>{children}</CopyCodeButton>
                   ),
                   h2: ({ children }) => (
                     <h2 className="font-serif text-2xl font-bold text-foreground mt-12 mb-4 pb-2 border-b border-border/40">{children}</h2>
@@ -358,6 +364,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </main>
 
+      <ReadNextBar post={relatedPosts[0] ?? null} />
       <BackToTop />
     </div>
   );

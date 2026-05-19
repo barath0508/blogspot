@@ -44,6 +44,8 @@ export function AdminPostEditor({ mode, initialData }: Props) {
   });
   const [saving, setSaving] = useState(false);
 
+  const [editorMode, setEditorMode] = useState<"markdown" | "html">("markdown");
+
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
@@ -85,9 +87,43 @@ export function AdminPostEditor({ mode, initialData }: Props) {
         <textarea required className={`${textareaClass} min-h-20`} placeholder="Short summary shown in post cards..." value={form.excerpt} onChange={set("excerpt")} />
       </Field>
 
-      <Field label="Content" hint="Markdown supported">
-        <textarea required className={`${textareaClass} min-h-80 font-mono text-sm`} placeholder="Write your post in Markdown..." value={form.content} onChange={set("content")} />
-      </Field>
+      <div className="space-y-1.5">
+        <div className="flex items-end justify-between">
+          <div>
+            <label className="text-sm font-medium text-gray-700">Content</label>
+            <span className="ml-2 text-xs text-gray-400">
+              {editorMode === "markdown" ? "Markdown supported" : "Raw HTML supported"}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 p-1">
+            <button
+              type="button"
+              onClick={() => setEditorMode("markdown")}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                editorMode === "markdown" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Compose (MD)
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditorMode("html")}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                editorMode === "html" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              HTML view
+            </button>
+          </div>
+        </div>
+        <textarea
+          required
+          className={`${textareaClass} min-h-[500px] font-mono text-sm`}
+          placeholder={editorMode === "markdown" ? "Write your post in Markdown..." : "<p>Paste or write your raw HTML here...</p>"}
+          value={form.content}
+          onChange={set("content")}
+        />
+      </div>
 
       <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
         <p className="text-sm font-semibold text-gray-700">SEO Settings</p>

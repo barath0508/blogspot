@@ -10,6 +10,8 @@ import { BackToTop } from "@/components/BackToTop";
 import { getPublishedPosts, POSTS_PER_PAGE } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
 import { buildPageMetadata } from "@/lib/seo";
+import { AnimatedGradient } from "@/components/AnimatedGradient";
+import { StatsCounter } from "@/components/StatsCounter";
 
 export const revalidate = 60;
 
@@ -128,8 +130,9 @@ export default async function Home({
       <main>
         {/* ── Hero ── */}
         {!isFiltered && page === 1 && (
-          <section className="py-12 lg:py-20">
-            <div className="mx-auto max-w-6xl px-4 lg:px-8">
+          <section className="relative py-12 lg:py-20 overflow-hidden">
+            <AnimatedGradient />
+            <div className="relative z-10 mx-auto max-w-6xl px-4 lg:px-8">
               <div className="mb-10 max-w-3xl">
                 <h1 className="font-serif text-4xl font-bold leading-tight text-foreground lg:text-5xl">
                   <span className="text-balance">
@@ -161,6 +164,15 @@ export default async function Home({
               </div>
             </div>
           </section>
+        )}
+
+        {/* ── Stats ── */}
+        {!isFiltered && page === 1 && (
+          <StatsCounter
+            totalArticles={total}
+            totalCategories={categories.length}
+            totalViews={50000} // This could be fetched from DB, mocked for now
+          />
         )}
 
         {/* ── Trending strip ── */}

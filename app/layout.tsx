@@ -9,6 +9,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { MobileNav } from "@/components/MobileNav";
 import { TrendlyLogo } from "@/components/TrendlyLogo";
 import { CookieBanner } from "@/components/CookieBanner";
+import { CommandPalette } from "@/components/CommandPalette";
+import { SearchTrigger } from "@/components/SearchTrigger";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -121,8 +123,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* ── Header ── */}
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
           <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">
-            <Link href="/" className="flex items-center" aria-label={`${SITE_NAME} — Home`}>
-              <span className="font-serif text-xl font-bold tracking-tight text-foreground">Trendly</span>
+            <Link href="/" className="flex items-center group" aria-label={`${SITE_NAME} — Home`}>
+              <TrendlyLogo className="h-7 w-auto text-foreground transition-transform duration-300 group-hover:scale-[1.02]" />
             </Link>
 
             <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
@@ -134,7 +136,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               ))}
             </nav>
 
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-3 md:flex">
+              <SearchTrigger />
               <ThemeToggle />
               <Link href="/admin"
                 className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
@@ -223,6 +226,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </footer>
 
+        <CommandPalette />
         </ThemeProvider>
         <CookieBanner />
         <Analytics />
