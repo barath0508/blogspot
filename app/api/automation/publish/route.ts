@@ -5,7 +5,7 @@ import { timingSafeEqual } from "crypto";
 export const runtime = "nodejs";
 export const maxDuration = 300; // 5 min — enough for multiple Gemini calls
 
-const POSTS_PER_RUN = 6; // publishes 6 posts at once (~1 every 4 hours equivalent)
+const POSTS_PER_RUN = 1; // publishes 1 post at once
 
 function safeCompare(a: string, b: string) {
   try {
