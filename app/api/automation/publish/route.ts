@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { publishTrendingPost } from "@/lib/automation/autoPublisher";
+import { fetchTrendingTopics, publishSpecificTopic } from "@/lib/automation/autoPublisher";
 import { timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
@@ -39,17 +39,30 @@ export async function GET(request: Request) {
   );
 
   const results = [];
+  let topics: string[] = [];
 
-  for (let i = 0; i < count; i++) {
+  try {
+    topics = await fetchTrendingTopics(count);
+  } catch (error) {
+    return NextResponse.json({
+      error: "Failed to fetch topics",
+      details: error instanceof Error ? error.message : "Unknown error"
+    }, { status: 500 });
+  }
+
+  for (let i = 0; i < topics.length; i++) {
+    const topic = topics[i];
     try {
-      const result = await publishTrendingPost();
+      const result = await publishSpecificTopic(topic);
       results.push(result);
       // Small delay between posts to avoid Gemini rate limits
-      if (i < count - 1) await new Promise((r) => setTimeout(r, 3000));
+      if (i < topics.length - 1) await new Promise((r) => setTimeout(r, 3000));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       results.push({
         status: "failed",
-        error: error instanceof Error ? error.message : "Unknown error"
+        topic,
+        error: errorMessage.length > 1000 ? errorMessage.substring(0, 1000) + "...[truncated]" : errorMessage
       });
     }
   }

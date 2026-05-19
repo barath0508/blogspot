@@ -44,7 +44,7 @@ function decodeXmlEntities(input: string) {
     .replace(/&#39;/g, "'");
 }
 
-async function fetchTrendingTopic() {
+export async function fetchTrendingTopics(count: number = 10) {
   const geo = process.env.TRENDS_GEO || "US";
   const url = `https://trends.google.com/trending/rss?geo=${encodeURIComponent(geo)}`;
   assertAllowedUrl(url);
@@ -61,7 +61,7 @@ async function fetchTrendingTopic() {
     .filter((t) => t && !/^daily search trends$/i.test(t));
 
   if (!titles.length) throw new Error("No trending topics found");
-  return titles[0];
+  return titles.slice(0, count);
 }
 
 function extractAndRepairJson(raw: string): unknown {
@@ -185,7 +185,9 @@ imagePhrases Rules:
       });
 
       if (!response.ok) {
-        lastError = await response.text();
+        let errorText = await response.text();
+        // Truncate the error text to avoid blowing up the payload size and hitting Vercel's 4.5MB limit
+        lastError = errorText.length > 500 ? errorText.substring(0, 500) + '...[truncated]' : errorText;
         allErrors.push(`[${model}] ${response.status}: ${lastError}`);
         
         const isKeyError =
@@ -389,6 +391,6 @@ export async function publishSpecificTopic(topic: string) {
 }
 
 export async function publishTrendingPost() {
-  const topic = await fetchTrendingTopic();
-  return publishSpecificTopic(topic);
+  const topics = await fetchTrendingTopics(1);
+  return publishSpecificTopic(topics[0]);
 }
