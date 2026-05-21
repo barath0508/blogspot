@@ -128,14 +128,20 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // Focus input when opened
+  // Focus input and toggle scroll lock when opened
   useEffect(() => {
     if (open) {
       setQuery("");
       setResults([]);
       setActiveIndex(0);
       setTimeout(() => inputRef.current?.focus(), 50);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
   // Search articles with debounce

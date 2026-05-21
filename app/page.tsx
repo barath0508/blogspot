@@ -14,10 +14,11 @@ import { AnimatedGradient } from "@/components/AnimatedGradient";
 import { StatsCounter } from "@/components/StatsCounter";
 import { NewsletterCompact } from "@/components/NewsletterCompact";
 import { Flame, Rss, ArrowRight, BookOpen, Compass, Tag } from "lucide-react";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 export const revalidate = 60;
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "Trendly";
 const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
 
@@ -106,6 +107,7 @@ export default async function Home({
   const gridPosts = featuredPost ? posts.slice(1) : posts;
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
   const popularPosts = (popularPostsData || []) as { title: string; slug: string; cover_image: string | null; published_at: string; view_count: number }[];
+  const SectionTitleTag = (!isFiltered && page === 1) || params.q ? "h2" : "h1";
 
   const buildPageUrl = (p: number) => {
     const sp = new URLSearchParams();
@@ -211,9 +213,9 @@ export default async function Home({
             {/* Header info */}
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="font-serif text-2xl font-bold text-foreground">
+                <SectionTitleTag className="font-serif text-2xl font-bold text-foreground">
                   {isFiltered ? "Results" : page > 1 ? `Page ${page}` : "Latest Articles"}
-                </h2>
+                </SectionTitleTag>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {total} article{total !== 1 ? "s" : ""}
                   {totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""}

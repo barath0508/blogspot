@@ -1,11 +1,12 @@
 import { getPublishedPosts } from "@/lib/posts";
+import { getSiteUrl } from "@/lib/seoHelper";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 const SITE_NAME = "Trendly";
 
 export const revalidate = 3600;
 
 export async function GET() {
+  const SITE_URL = getSiteUrl();
   const { posts } = await getPublishedPosts();
 
   // Google News sitemap only accepts articles published in the last 2 days

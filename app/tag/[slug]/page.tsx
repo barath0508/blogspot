@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/PostCard";
 import { getPublishedPosts } from "@/lib/posts";
 import { buildPageMetadata } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/seoHelper";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "Trendly";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -37,8 +39,49 @@ export default async function TagPage({ params }: Props) {
 
   const tagName = posts[0].tags?.find((tag) => tag.slug === slug)?.name ?? slug.replace(/-/g, " ");
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": tagName,
+        "item": `${SITE_URL}/tag/${slug}`
+      }
+    ]
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/tag/${slug}/#webpage`,
+    "url": `${SITE_URL}/tag/${slug}`,
+    "name": `${tagName} articles | Trendly`,
+    "description": `Find the latest Trendly articles tagged ${tagName}.`,
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`
+    },
+    "hasPart": posts.map((post) => ({
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "url": `${SITE_URL}/blog/${post.slug}`,
+      "description": post.excerpt,
+      "datePublished": post.published_at
+    }))
+  };
+
   return (
     <main className="min-h-screen bg-background">
+      <Script id="tag-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <Script id="tag-collection-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
       <div className="mx-auto max-w-6xl px-4 lg:px-8 py-12">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

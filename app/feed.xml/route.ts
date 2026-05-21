@@ -1,6 +1,6 @@
 import { getPublishedPosts } from "@/lib/posts";
+import { getSiteUrl } from "@/lib/seoHelper";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 const SITE_NAME = "Trendly";
 const SITE_DESCRIPTION = "Trending technology news and AI-powered insights — updated every 30 minutes.";
 const ACCENT_COLOR = "#0d9488";
@@ -33,6 +33,7 @@ function markdownToHtml(md: string): string {
 }
 
 export async function GET() {
+  const SITE_URL = getSiteUrl();
   const { posts } = await getPublishedPosts();
 
   const items = posts

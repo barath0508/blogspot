@@ -11,12 +11,13 @@ import { TrendlyLogo } from "@/components/TrendlyLogo";
 import { CookieBanner } from "@/components/CookieBanner";
 import { CommandPalette } from "@/components/CommandPalette";
 import { SearchTrigger } from "@/components/SearchTrigger";
+import { getSiteUrl } from "@/lib/seoHelper";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "Trendly";
 const SITE_DESCRIPTION = "In-depth analysis and expert perspectives on technology, AI, and the ideas shaping our world.";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   robots: { index: true, follow: true, nocache: false, googleBot: { index: true, follow: true, noimageindex: false, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 } },
   alternates: { canonical: SITE_URL, types: { "application/rss+xml": `${SITE_URL}/feed.xml` } },
-  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION, other: { "msvalidate.01": [process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ?? ""] } },
+  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "google4867b014d6b90931", other: { "msvalidate.01": [process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION || "f8d17c11209945da88ec4617d4cec8fb"] } },
   openGraph: { title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, url: SITE_URL, siteName: SITE_NAME, type: "website", locale: "en_US", images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }] },
   twitter: { card: "summary_large_image", title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, site: "@trendly", images: [`${SITE_URL}/og-default.png`] }
 };

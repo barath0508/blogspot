@@ -1,12 +1,11 @@
 import { ImageResponse } from "next/og";
 import { getPublishedPostBySlug } from "@/lib/posts";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 export const runtime = "edge";
 export const alt = "Trendly Blog Post";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 
 const CATEGORY_COLORS: Record<string, string> = {
   "technology": "#3b82f6",
@@ -61,7 +60,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const readTime = Math.max(1, Math.round(wordCount / 200));
   const category = post.categories?.[0];
   const categoryColor = CATEGORY_COLORS[category?.slug?.toLowerCase() ?? ""] ?? "#4f46e5";
-  const hostname = new URL(SITE_URL).hostname;
+  const hostname = new URL(getSiteUrl()).hostname;
 
   return new ImageResponse(
     (

@@ -1,7 +1,5 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
-
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Trendly",

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { Rss, Mail } from "lucide-react";
 import { buildPageMetadata } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
+const SITE_URL = getSiteUrl();
 const CONTACT_EMAIL = "hello@trendly.com";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -15,8 +17,49 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function About() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About Us",
+        "item": `${SITE_URL}/about`
+      }
+    ]
+  };
+
+  const aboutPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${SITE_URL}/about/#webpage`,
+    "url": `${SITE_URL}/about`,
+    "name": "About Us | Trendly",
+    "description": `Learn about ${SITE_NAME} — our mission, editorial process, and the technology behind our AI-powered publication.`,
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`
+    },
+    "mainEntity": {
+      "@type": "Organization",
+      "name": SITE_NAME,
+      "url": SITE_URL,
+      "logo": `${SITE_URL}/icon-512.png`,
+      "description": "An AI-powered technology publication delivering expert-level analysis on artificial intelligence, software development, and the ideas shaping our digital future."
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Script id="about-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <Script id="about-page-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }} />
       <main className="mx-auto max-w-4xl px-4 py-12 lg:px-8 lg:py-20">
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

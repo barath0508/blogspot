@@ -1,12 +1,11 @@
 import { ImageResponse } from "next/og";
 import { getSupabase } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 export const runtime = "edge";
 export const alt = "Trendly Tag Articles";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -22,7 +21,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   const tagName = tagResult.data?.name ?? slug.replace(/-/g, " ");
   const articleCount = countResult.count ?? 0;
-  const hostname = new URL(SITE_URL).hostname;
+  const hostname = new URL(getSiteUrl()).hostname;
 
   return new ImageResponse(
     (

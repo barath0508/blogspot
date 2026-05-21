@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { getSupabase } from "@/lib/supabase";
 import { buildPageMetadata } from "@/lib/seo";
 import { AnimatedGradient } from "@/components/AnimatedGradient";
 import { ArrowRight, Cpu, Layers, MessageSquare, ShieldAlert, Sparkles, Terminal, TrendingUp, Zap } from "lucide-react";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 
 export const revalidate = 60;
 
@@ -100,9 +102,48 @@ export default async function CategoriesPage() {
     .filter((cat: any) => cat.count > 0) // Only show categories with published posts
     .sort((a: any, b: any) => b.count - a.count); // Sort by post count desc
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Topics",
+        "item": `${SITE_URL}/categories`
+      }
+    ]
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/categories/#webpage`,
+    "url": `${SITE_URL}/categories`,
+    "name": "Topics — Explore Articles by Category | Trendly",
+    "description": "Browse Trendly articles by category. Find insights on artificial intelligence, software development, startups, cybersecurity, and digital trends.",
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`
+    },
+    "hasPart": categoriesWithCounts.map((cat) => ({
+      "@type": "WebPage",
+      "name": cat.name,
+      "url": `${SITE_URL}/category/${cat.slug}`
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <AnimatedGradient />
+      <Script id="categories-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <Script id="categories-collection-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 lg:px-8 lg:py-20">
         

@@ -19,8 +19,9 @@ import { CopyCodeButton } from "@/components/CopyCodeButton";
 import { ReadNextBar } from "@/components/ReadNextBar";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/seoHelper";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 const SITE_NAME = "Trendly";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -240,7 +241,7 @@ export default async function BlogPostPage({ params }: Props) {
                     <span className="block relative w-full my-8 overflow-hidden rounded-xl shadow-sm border border-border/40" style={{ aspectRatio: "16/9" }}>
                       <Image
                         src={String(src ?? "")}
-                        alt={String(alt ?? "")}
+                        alt={String(alt || post.title || "Blog post image")}
                         fill
                         unoptimized
                         className="object-cover"

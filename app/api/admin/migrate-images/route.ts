@@ -4,9 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 function toPollinationsUrl(title: string, slug: string): string {
-  const prompt = `Professional editorial photo for article titled "${title}", cinematic lighting, magazine cover style, no text, no watermark`;
+  const subject = title.replace(/[:!?.,|]/g, "").split(" ").slice(0, 6).join(" ");
+  const prompt = `Professional editorial photo depicting ${subject}, cinematic lighting, high-end magazine style, award-winning composition, no text, no watermark`;
   const seed = parseInt(slug.replace(/[^0-9]/g, "").slice(0, 6) || "42", 10);
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=900&seed=${seed}&nologo=true`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&width=1600&height=900&seed=${seed}&nologo=true`;
 }
 
 export async function POST(request: Request) {
@@ -34,18 +35,19 @@ export async function POST(request: Request) {
       .replace(
         /!\[([^\]]*)\]\(https:\/\/source\.unsplash\.com[^)]+\)/g,
         (_: string, alt: string) => {
-          const phrase = alt || post.title;
+          const phrase = (alt || post.title).replace(/[:!?.,|]/g, "").split(" ").slice(0, 6).join(" ");
           const seed = Math.floor(Math.random() * 99999);
-          const prompt = `Editorial illustration for "${phrase}", professional photography, cinematic, no text`;
-          return `![${alt}](https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true)`;
+          const prompt = `Professional editorial photo of ${phrase}, vibrant lighting, high-end editorial detail, cinematic, sharp focus, no text, no watermark`;
+          return `![${alt}](https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&width=1200&height=630&seed=${seed}&nologo=true)`;
         }
       )
       .replace(
         /!\[([^\]]*)\]\(https:\/\/loremflickr\.com[^)]+\)/g,
         (_: string, alt: string) => {
+          const phrase = (alt || post.title).replace(/[:!?.,|]/g, "").split(" ").slice(0, 6).join(" ");
           const seed = Math.floor(Math.random() * 99999);
-          const prompt = `Editorial illustration for "${alt || post.title}", professional photography, cinematic, no text`;
-          return `![${alt}](https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true)`;
+          const prompt = `Professional editorial photo of ${phrase}, vibrant lighting, high-end editorial detail, cinematic, sharp focus, no text, no watermark`;
+          return `![${alt}](https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&width=1200&height=630&seed=${seed}&nologo=true)`;
         }
       );
 

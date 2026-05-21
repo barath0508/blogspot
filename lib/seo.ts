@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getSiteUrl } from "./seoHelper";
 
 type GenerateSeoOptions = {
   title: string;
@@ -84,7 +85,7 @@ export function generateSeoMetadata(options: GenerateSeoOptions) {
 }
 
 export async function pingSearchEngines(): Promise<void> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const base = getSiteUrl();
   if (!base) return;
   const sitemapUrl = encodeURIComponent(`${base}/sitemap.xml`);
   await Promise.allSettled([
@@ -98,7 +99,7 @@ export async function pingSearchEngines(): Promise<void> {
  * Fires-and-forgets — never throws.
  */
 export async function pingIndexNow(slug: string): Promise<void> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const base = getSiteUrl();
   const key = "f8d17c11209945da88ec4617d4cec8fb";
   if (!base) return;
 
@@ -132,7 +133,7 @@ export async function pingIndexNow(slug: string): Promise<void> {
 }
 
 export function buildPageMetadata(options: BuildPageMetadataOptions): Metadata {
-  const imageUrl = options.imageUrl ?? `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app"}/og-default.png`;
+  const imageUrl = options.imageUrl ?? `${getSiteUrl()}/og-default.png`;
   const metadataType = options.type ?? "website";
 
   return {

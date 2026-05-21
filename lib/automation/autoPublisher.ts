@@ -11,6 +11,7 @@ type GeneratedPost = {
   category: string;
   tags: string[];
   imagePhrases: string[];
+  coverImageKeyword: string;
 };
 
 const ALLOWED_FETCH_HOSTS = new Set([
@@ -239,42 +240,39 @@ imagePhrases Rules:
       .filter(Boolean)
       .slice(0, 4),
     coverImageKeyword: String((parsed as any).coverImageKeyword || parsed.category || "technology").trim(),
-  } as GeneratedPost & { coverImageKeyword: string };
+  } as GeneratedPost;
 }
 
-function generateCoverImageUrl(title: string, category: string, keywords: string[]): string {
-  const kw = keywords.slice(0, 3).join(", ");
+function generateCoverImageUrl(keyword: string, category: string): string {
   const prompt = [
-    `Professional editorial photo for article titled "${title}"`,
-    `Category: ${category}`,
-    kw ? `Keywords: ${kw}` : "",
-    "Ultra high quality, cinematic lighting, sharp focus, magazine cover style",
-    "No text, no watermark, no logos",
+    `Professional editorial photo depicting ${keyword}`,
+    `Concept: ${category}`,
+    "Minimalist composition, award-winning editorial photography, high-end magazine style, cinematic lighting, sharp focus",
+    "No text, no watermark, no logos, clean backdrop",
   ]
     .filter(Boolean)
     .join(". ");
-  const seed = Date.now() % 99999;
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=900&seed=${seed}&nologo=true&enhance=true`;
+  const seed = Math.floor(Math.random() * 99999);
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&width=1600&height=900&seed=${seed}&nologo=true&enhance=true`;
 }
 
-function generateSectionImageUrl(phrase: string, title: string): string {
+function generateSectionImageUrl(phrase: string): string {
   const prompt = [
-    `Editorial illustration for section about "${phrase}"`,
-    `Part of article: "${title}"`,
-    "Professional photography, vibrant colors, high detail, cinematic",
-    "No text, no watermark",
+    `Professional editorial photo of ${phrase}`,
+    "Vibrant lighting, high-end editorial detail, cinematic, sharp focus",
+    "No text, no watermark, no logos",
   ].join(". ");
   const seed = Math.floor(Math.random() * 99999);
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&width=1200&height=630&seed=${seed}&nologo=true&enhance=true`;
 }
 
-function injectSectionImages(content: string, imagePhrases: string[], title: string): string {
+function injectSectionImages(content: string, imagePhrases: string[]): string {
   if (!imagePhrases.length) return content;
   let phraseIndex = 0;
   return content.replace(/^(## .+)$/gm, (heading) => {
     if (phraseIndex >= imagePhrases.length) return heading;
     const phrase = imagePhrases[phraseIndex++];
-    const imageUrl = generateSectionImageUrl(phrase, title);
+    const imageUrl = generateSectionImageUrl(phrase);
     return `${heading}\n\n![${phrase}](${imageUrl})\n`;
   });
 }
@@ -346,8 +344,8 @@ export async function publishSpecificTopic(topic: string) {
     return { status: "skipped", reason: "already_published", topic, slug };
   }
 
-  const coverImage = generateCoverImageUrl(post.title, post.category, post.seoKeywords);
-  const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases, post.title);
+  const coverImage = generateCoverImageUrl(post.coverImageKeyword, post.category);
+  const contentWithSectionImages = injectSectionImages(post.content, post.imagePhrases);
   const contentWithLinks = await appendInternalLinks(contentWithSectionImages, topic);
 
   const { data: created, error } = await supabaseAdmin

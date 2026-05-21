@@ -1,12 +1,11 @@
 import { ImageResponse } from "next/og";
 import { getSupabase } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 export const runtime = "edge";
 export const alt = "Trendly Category Articles";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
 
 const CATEGORY_COLORS: Record<string, string> = {
   "technology": "#3b82f6",
@@ -36,7 +35,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const categoryName = categoryResult.data?.name ?? slug.replace(/-/g, " ");
   const articleCount = countResult.count ?? 0;
   const categoryColor = CATEGORY_COLORS[slug.toLowerCase()] ?? "#4f46e5";
-  const hostname = new URL(SITE_URL).hostname;
+  const hostname = new URL(getSiteUrl()).hostname;
 
   return new ImageResponse(
     (

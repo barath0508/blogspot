@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
@@ -8,6 +8,17 @@ type NavLink = { href: string; label: string };
 
 export function MobileNav({ links }: { links: NavLink[] }) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <>

@@ -35,6 +35,14 @@ export function ReadNextBar({ post }: { post: ReadNextPost | null }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [post, dismissed]);
 
+  useEffect(() => {
+    const isCurrentlyVisible = visible && !dismissed;
+    window.dispatchEvent(new CustomEvent("read-next-bar-toggle", { detail: { visible: isCurrentlyVisible } }));
+    return () => {
+      window.dispatchEvent(new CustomEvent("read-next-bar-toggle", { detail: { visible: false } }));
+    };
+  }, [visible, dismissed]);
+
   if (!post || dismissed) return null;
 
   return (

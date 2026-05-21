@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/LegalLayout";
 import { buildPageMetadata } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
+const SITE_URL = getSiteUrl();
 const CONTACT_EMAIL = "hello@trendly.com";
 
 export const metadata: Metadata = buildPageMetadata({

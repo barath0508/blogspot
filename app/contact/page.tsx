@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { Mail, Rss } from "lucide-react";
 import { buildPageMetadata } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app";
+const SITE_URL = getSiteUrl();
 const CONTACT_EMAIL = "hello@trendly.com";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -15,8 +17,42 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function Contact() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Contact Us",
+        "item": `${SITE_URL}/contact`
+      }
+    ]
+  };
+
+  const contactPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${SITE_URL}/contact/#webpage`,
+    "url": `${SITE_URL}/contact`,
+    "name": "Contact Us | Trendly",
+    "description": `Get in touch with the ${SITE_NAME} team. We welcome feedback, corrections, and partnership inquiries.`,
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Script id="contact-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <Script id="contact-page-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageJsonLd) }} />
       <main className="mx-auto max-w-3xl px-4 py-12 lg:px-8 lg:py-20">
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

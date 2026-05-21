@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { getSupabase } from "@/lib/supabase";
 import { buildPageMetadata } from "@/lib/seo";
 import { AnimatedGradient } from "@/components/AnimatedGradient";
 import { Hash, ArrowRight } from "lucide-react";
+import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blogspot-phi.vercel.app").replace(/\/$/, "");
+const SITE_URL = getSiteUrl();
 
 export const revalidate = 60;
 
@@ -53,9 +55,48 @@ export default async function TagsPage() {
   // Calculate sizing tiers for tags cloud
   const maxCount = tagsWithCounts.length > 0 ? tagsWithCounts[0].count : 1;
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_URL
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tags",
+        "item": `${SITE_URL}/tags`
+      }
+    ]
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/tags/#webpage`,
+    "url": `${SITE_URL}/tags`,
+    "name": "Tags — Explore Articles by Keywords | Trendly",
+    "description": "Browse articles on Trendly using tags. Find quick insights by searching specific keywords like AI news, coding, startups, design, and developer guides.",
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`
+    },
+    "hasPart": tagsWithCounts.map((tag) => ({
+      "@type": "WebPage",
+      "name": tag.name,
+      "url": `${SITE_URL}/tag/${tag.slug}`
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <AnimatedGradient />
+      <Script id="tags-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <Script id="tags-collection-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 lg:px-8 lg:py-20">
         
