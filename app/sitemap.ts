@@ -29,14 +29,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const categoryEntries: MetadataRoute.Sitemap = (categories ?? []).map((cat: any) => ({
-    url: `${base}/?category=${cat.slug}`,
+    url: `${base}/category/${cat.slug}`,
     lastModified: cat.updated_at ? new Date(cat.updated_at) : new Date(),
     changeFrequency: "daily" as const,
     priority: 0.6
   }));
 
   const tagEntries: MetadataRoute.Sitemap = (tags ?? []).map((tag: any) => ({
-    url: `${base}/?tag=${tag.slug}`,
+    url: `${base}/tag/${tag.slug}`,
     lastModified: tag.updated_at ? new Date(tag.updated_at) : new Date(),
     changeFrequency: "daily" as const,
     priority: 0.5

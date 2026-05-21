@@ -118,7 +118,7 @@ export default async function BlogPostPage({ params }: Props) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-          ...(category ? [{ "@type": "ListItem", position: 2, name: category.name, item: `${SITE_URL}/?category=${category.slug}` }] : []),
+          ...(category ? [{ "@type": "ListItem", position: 2, name: category.name, item: `${SITE_URL}/category/${category.slug}` }] : []),
           { "@type": "ListItem", position: category ? 3 : 2, name: post.title, item: postUrl }
         ]
       }
@@ -131,7 +131,7 @@ export default async function BlogPostPage({ params }: Props) {
       <ViewCounter slug={post.slug} />
       <Script id="article-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
 
-      <main className="mx-auto max-w-5xl px-4 lg:px-8 py-8">
+      <main className="mx-auto max-w-6xl px-4 lg:px-8 py-8">
         
         {/* ── Body: content + sidebar ── */}
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 items-start pb-20">
@@ -161,7 +161,7 @@ export default async function BlogPostPage({ params }: Props) {
               {/* Category + tags */}
               <div className="mb-5 flex flex-wrap items-center gap-2">
                 {category && (
-                  <Link href={`/?category=${category.slug}`}
+                  <Link href={`/category/${category.slug}`}
                     className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
                     {category.name}
                   </Link>
@@ -245,7 +245,7 @@ export default async function BlogPostPage({ params }: Props) {
                         unoptimized
                         className="object-cover"
                         loading="lazy"
-                        sizes="(max-width: 768px) 100vw, 560px"
+                        sizes="(max-width: 768px) 100vw, 800px"
                       />
                     </span>
                   ),

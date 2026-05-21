@@ -12,12 +12,12 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot",
-        allow: ["/", "/blog/", "/?category=", "/?tag="],
+        allow: ["/", "/blog/", "/category/", "/tag/"],
         disallow: ["/admin", "/api/", "/login", "/?q="]
       },
       {
         userAgent: "Bingbot",
-        allow: ["/", "/blog/", "/?category=", "/?tag="],
+        allow: ["/", "/blog/", "/category/", "/tag/"],
         disallow: ["/admin", "/api/", "/login", "/?q="]
       },
       {

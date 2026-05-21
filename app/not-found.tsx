@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 const LINKS = [
   { href: "/", label: "Home", icon: "🏠", desc: "Back to homepage" },
-  { href: "/?category=technology", label: "Technology", icon: "💻", desc: "Latest tech news" },
-  { href: "/?category=artificial-intelligence", label: "AI", icon: "🤖", desc: "AI & machine learning" },
-  { href: "/?category=business", label: "Business", icon: "📈", desc: "Business & startups" },
+  { href: "/category/technology", label: "Technology", icon: "💻", desc: "Latest tech news" },
+  { href: "/category/artificial-intelligence", label: "AI", icon: "🤖", desc: "AI & machine learning" },
+  { href: "/category/business", label: "Business", icon: "📈", desc: "Business & startups" },
 ];
 
 export default function NotFound() {

@@ -48,17 +48,17 @@ const websiteJsonLd = {
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/?category=technology", label: "Articles" },
-  { href: "/?category=artificial-intelligence", label: "Categories" },
+  { href: "/category/technology", label: "Technology" },
+  { href: "/categories", label: "Topics" },
   { href: "/about", label: "About" },
 ];
 
 const FOOTER_LINKS = {
   explore: [
     { href: "/", label: "Home" },
-    { href: "/?category=technology", label: "Technology" },
-    { href: "/?category=artificial-intelligence", label: "Artificial Intelligence" },
-    { href: "/?category=business", label: "Business" },
+    { href: "/category/technology", label: "Technology" },
+    { href: "/category/artificial-intelligence", label: "Artificial Intelligence" },
+    { href: "/category/business", label: "Business" },
     { href: `${SITE_URL}/feed.xml`, label: "RSS Feed" },
   ],
   company: [

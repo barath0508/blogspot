@@ -5,7 +5,7 @@ import { useState, useRef, useCallback } from "react";
 export function CopyCodeButton({ children }: { children: React.ReactNode }) {
   const [copied, setCopied] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleCopy = useCallback(async () => {
     const text = preRef.current?.textContent ?? "";
