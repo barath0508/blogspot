@@ -470,10 +470,16 @@
   border-radius: var(--radius);
   padding: 0.625rem 0.875rem;
   color: var(--foreground);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.12s, box-shadow 0.12s;
   outline: none;
+}
+
+@media (min-width: 768px) {
+  .input-base {
+    font-size: 0.875rem;
+  }
 }
 
 .input-base::placeholder {

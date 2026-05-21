@@ -56,7 +56,7 @@ export function Newsletter() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={status === "loading"}
-                className="h-11 flex-1 rounded-md border border-border/60 bg-background px-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                className="h-11 flex-1 rounded-md border border-border/60 bg-background px-4 text-base md:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                 suppressHydrationWarning
               />
               <button

@@ -223,6 +223,11 @@ export default async function BlogPostPage({ params }: Props) {
             )}
 
             <AdSenseAd slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID ?? ""} className="mb-10" />
+
+            <div className="lg:hidden mb-8">
+              <TableOfContents />
+            </div>
+
             <article className="prose prose-base max-w-none
               prose-headings:font-serif prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
               prose-p:text-muted-foreground prose-p:leading-relaxed

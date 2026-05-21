@@ -50,7 +50,7 @@ export function SearchBar() {
         value={query}
         onChange={handleChange}
         placeholder="Search articles..."
-        className="input-base h-12 pl-11 pr-10 rounded-xl text-sm"
+        className="input-base h-12 pl-11 pr-10 rounded-xl"
         aria-label="Search articles"
         autoComplete="off"
         suppressHydrationWarning

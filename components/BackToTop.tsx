@@ -27,10 +27,10 @@ export function BackToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Back to top"
       title="Back to top"
-      className={`fixed right-6 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-surface border border-border shadow-lg text-muted hover:text-foreground hover:border-border-2 hover:shadow-xl transition-all duration-300 ${
+      className={`fixed right-[calc(1.5rem+env(safe-area-inset-right,0px))] z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-surface border border-border shadow-lg text-muted hover:text-foreground hover:border-border-2 hover:shadow-xl transition-all duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       } ${
-        readNextVisible ? "bottom-[92px]" : "bottom-6"
+        readNextVisible ? "bottom-[calc(92px+env(safe-area-inset-bottom,0px))]" : "bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
       }`}
     >
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

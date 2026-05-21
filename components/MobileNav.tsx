@@ -33,8 +33,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
       {open && (
         <div className="fixed inset-0 z-[200] md:hidden" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-72 bg-background border-l border-border/40 flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+          <div className="absolute right-0 top-0 h-[100dvh] w-72 bg-background border-l border-border/40 flex flex-col">
+            <div className="flex items-center justify-between pl-5 pr-[calc(1.25rem+env(safe-area-inset-right,0px))] py-4 border-b border-border/40">
               <Link href="/" onClick={() => setOpen(false)}>
                 <span className="font-serif text-lg font-bold tracking-tight text-foreground">Trendly</span>
               </Link>
@@ -43,7 +43,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <nav className="flex flex-col p-4 flex-1">
+            <nav className="flex flex-col pl-4 pr-[calc(1rem+env(safe-area-inset-right,0px))] py-4 flex-1">
               {links.map((l) => (
                 <Link key={l.href} href={l.href as any} onClick={() => setOpen(false)}
                   className="py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/40 last:border-0">

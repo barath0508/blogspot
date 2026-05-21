@@ -50,7 +50,7 @@ export function NewsletterCompact() {
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={status === "loading"}
-          className="h-10 w-full rounded-lg border border-border/60 bg-background pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 transition-all"
+          className="h-10 w-full rounded-lg border border-border/60 bg-background pl-9 pr-3 text-base md:text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 transition-all"
         />
       </div>
       <button

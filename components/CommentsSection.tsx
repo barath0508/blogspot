@@ -57,14 +57,14 @@ export function CommentsSection({ slug, initialComments }: Props) {
         <div className="grid sm:grid-cols-2 gap-3">
           <input
             required
-            className="input-base text-sm"
+            className="input-base"
             placeholder="Your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             aria-label="Your name"
           />
           <input
-            className="input-base text-sm"
+            className="input-base"
             placeholder="Email (optional, not shown)"
             type="email"
             aria-label="Email address"
@@ -72,7 +72,7 @@ export function CommentsSection({ slug, initialComments }: Props) {
         </div>
         <textarea
           required
-          className="input-base text-sm min-h-[96px] resize-none"
+          className="input-base min-h-[96px] resize-none"
           placeholder="Share your thoughts..."
           value={body}
           onChange={(e) => setBody(e.target.value)}

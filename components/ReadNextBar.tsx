@@ -52,7 +52,7 @@ export function ReadNextBar({ post }: { post: ReadNextPost | null }) {
       }`}
       style={{ willChange: "transform" }}
     >
-      <div className="mx-auto max-w-3xl px-4 pb-4">
+      <div className="mx-auto max-w-3xl px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
         <div className="read-next-bar relative flex items-center gap-4 rounded-xl border border-border/60 bg-card/95 backdrop-blur-xl p-3 shadow-2xl shadow-background/50">
           {/* Dismiss */}
           <button

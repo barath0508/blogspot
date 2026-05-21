@@ -236,7 +236,7 @@ export function CommandPalette() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search articles, navigate, or run actions..."
-              className="h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
+              className="h-12 flex-1 bg-transparent text-base md:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
               autoComplete="off"
               spellCheck={false}
             />

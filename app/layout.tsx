@@ -123,7 +123,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {/* ── Header ── */}
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
-          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] lg:px-8 lg:pl-[calc(2rem+env(safe-area-inset-left,0px))] lg:pr-[calc(2rem+env(safe-area-inset-right,0px))]">
             <Link href="/" className="flex items-center group" aria-label={`${SITE_NAME} — Home`}>
               <TrendlyLogo className="h-7 w-auto text-foreground transition-transform duration-300 group-hover:scale-[1.02]" />
             </Link>
@@ -160,7 +160,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {/* ── Footer ── */}
         <footer className="border-t border-border/40 bg-card py-12 lg:py-16" aria-label="Site footer">
-          <div className="mx-auto max-w-6xl px-4 lg:px-8">
+          <div className="mx-auto max-w-6xl px-4 pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] lg:px-8 lg:pl-[calc(2rem+env(safe-area-inset-left,0px))] lg:pr-[calc(2rem+env(safe-area-inset-right,0px))]">
             <div className="grid gap-8 lg:grid-cols-5">
               <div className="lg:col-span-2">
                 <Link href="/" className="inline-block">
