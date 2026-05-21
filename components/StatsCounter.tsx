@@ -11,7 +11,7 @@ type Stat = {
 
 function AnimatedNumber({ target, suffix, inView }: { target: number; suffix: string; inView: boolean }) {
   const [current, setCurrent] = useState(0);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!inView) { setCurrent(0); return; }
