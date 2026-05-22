@@ -112,8 +112,8 @@ export default async function BlogPostPage({ params }: Props) {
         dateModified: post.updated_at ?? post.published_at ?? post.created_at,
         image: post.cover_image ? { "@type": "ImageObject", url: post.cover_image, width: 1600, height: 900 } : undefined,
         keywords: post.seo_keywords.join(", "),
-        author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-        publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png` } }
+        author: { "@type": "Person", name: "Trendly AI Team" },
+        publisher: { "@type": "Organization", name: "Trendly | Technology, AI & Ideas", url: SITE_URL, logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` } }
       },
       {
         "@type": "BreadcrumbList",
