@@ -11,11 +11,13 @@ export async function getPublishedPosts(params?: {
   tag?: string;
   q?: string;
   page?: number;
+  perPage?: number;
 }) {
   const supabase = getSupabase();
   const page = Math.max(1, params?.page ?? 1);
-  const from = (page - 1) * POSTS_PER_PAGE;
-  const to = from + POSTS_PER_PAGE - 1;
+  const perPage = params?.perPage ?? POSTS_PER_PAGE;
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
 
   // Skip empty search query
   if (params?.q !== undefined && params.q.trim() === "") {

@@ -49,7 +49,7 @@ Production-ready starter for a dynamic blog using Next.js App Router, Tailwind C
    - `npm install`
    - `npm run dev`
 
-## Automated AI Publishing (Every 30 Minutes)
+## Automated AI Publishing (Every 6 Hours)
 
 This project includes an auto-publish workflow:
 
@@ -71,8 +71,8 @@ This project includes an auto-publish workflow:
 
 - API route: `/api/automation/publish`
 - Auth: `Authorization: Bearer <AUTOMATION_CRON_SECRET>` (or `x-cron-secret`)
-- `vercel.json` is configured to run every 30 minutes:
-  - `*/30 * * * *`
+- `vercel.json` is configured to run every 6 hours:
+  - `0 */6 * * *`
 
 ### Test manually
 

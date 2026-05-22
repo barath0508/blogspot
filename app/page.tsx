@@ -81,7 +81,12 @@ export default async function Home({
   const page = Math.max(1, parseInt(params.page ?? "1", 10));
   const supabase = getSupabase();
 
-  const [{ posts, total }, { data: popularPostsData }, { data: allCategories }] = await Promise.all([
+  const [
+    { posts, total },
+    { data: popularPostsData },
+    { data: allCategories },
+    { data: viewsData }
+  ] = await Promise.all([
     getPublishedPosts({ category: params.category, tag: params.tag, q: params.q, page }),
     supabase
       .from("posts")
@@ -89,8 +94,11 @@ export default async function Home({
       .eq("is_published", true)
       .order("view_count", { ascending: false })
       .limit(4),
-    supabase.from("categories").select("name,slug").order("name")
+    supabase.from("categories").select("name,slug").order("name"),
+    supabase.from("posts").select("view_count").eq("is_published", true)
   ]);
+
+  const totalViews = (viewsData || []).reduce((sum: number, post: any) => sum + (post.view_count || 0), 0);
 
   const PREFERRED = ["technology", "artificial-intelligence", "software-development", "business", "startup", "innovation", "cybersecurity", "trending"];
   const categories = ((allCategories || []) as { name: string; slug: string }[])
@@ -152,7 +160,7 @@ export default async function Home({
                   </span>
                 </h1>
                 <p className="mt-4 text-lg text-muted-foreground">
-                  Expert analysis on AI, technology, and the breakthroughs defining the next decade — published automatically every 30 minutes.
+                  Expert analysis on AI, technology, and the breakthroughs defining the next decade — published automatically every 6 hours.
                 </p>
                 <div className="mt-6 max-w-lg">
                   <Suspense><SearchBar /></Suspense>
@@ -181,8 +189,8 @@ export default async function Home({
         {!isFiltered && page === 1 && (
           <StatsCounter
             totalArticles={total}
-            totalCategories={categories.length}
-            totalViews={50000} // Fetch from DB is mocked for now
+            totalCategories={allCategories?.length ?? 0}
+            totalViews={totalViews}
           />
         )}
 
@@ -319,7 +327,7 @@ export default async function Home({
                   </div>
                   <h3 className="font-serif text-lg font-bold text-foreground">Next-Gen Technology Insights</h3>
                   <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                    Trendly is a fully automated, AI-powered technology publication tracking breakthroughs in artificial intelligence, software design, business disruptors, and engineering. Updated every 30 minutes.
+                    Trendly is a fully automated, AI-powered technology publication tracking breakthroughs in artificial intelligence, software design, business disruptors, and engineering. Updated every 6 hours.
                   </p>
                   <div className="mt-6 flex flex-col gap-3">
                     <Link href="/about" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">

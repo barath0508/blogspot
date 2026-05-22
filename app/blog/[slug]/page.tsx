@@ -299,7 +299,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Written by</p>
                   <h3 className="mt-0.5 font-serif text-base font-bold text-foreground">{SITE_NAME} Editorial</h3>
                   <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-                    AI-powered editorial delivering high-signal analysis on technology, AI, and digital trends — updated every 30 minutes.
+                    AI-powered editorial delivering high-signal analysis on technology, AI, and digital trends — updated every 6 hours.
                   </p>
                   <Link href="/" className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
                     Browse all articles

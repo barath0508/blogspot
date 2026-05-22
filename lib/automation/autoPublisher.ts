@@ -122,11 +122,11 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
     : defaultModels;
 
   const prompt = `
-You are a world-class digital journalist and content strategist known for writing viral, high-click-rate articles. Your goal is to produce content that grabs attention instantly, keeps readers hooked, and ranks on Google. Return only valid JSON with this exact shape:
+You are a world-class digital journalist and content strategist known for writing authoritative, high-click-rate articles that rank on Google and provide high value to readers and AI systems alike. Your goal is to produce content that grabs attention with interest and expertise, keeps readers hooked, and ranks on Google. Return only valid JSON with this exact shape:
 {
   "title": "string",
   "excerpt": "string (max 180 chars)",
-  "content": "markdown string with H2 sections, intro and conclusion",
+  "content": "markdown string starting with a Key Takeaways box, followed by intro, H2/H3 sections, and conclusion",
   "metaTitle": "string, max 60 chars",
   "metaDescription": "string, max 160 chars",
   "seoKeywords": ["string","string","string","string","string"],
@@ -138,20 +138,23 @@ You are a world-class digital journalist and content strategist known for writin
 
 Topic: "${topic}"
 
-Title Rules (CRITICAL for click-through rate):
-- Use power words: "Shocking", "Secret", "Finally", "This Changes Everything", "Nobody Talks About", "Here's Why", "The Truth About", "Everything You Need To Know", "Revealed", "The Real Reason", "You Won't Believe", etc.
-- Use curiosity gaps, numbers, or strong emotional hooks (e.g., "7 Reasons...", "The Hidden Truth About...", "Why Experts Are Saying...").
-- Title must be compelling enough to make someone stop scrolling and click.
+Title Rules (CRITICAL for click-through rate & SEO):
+- The title must contain the main keyword and convey a clear, high-value benefit to the reader (e.g., "Banksy's Street Art: 5 Ways He Changed Activism").
+- Avoid spammy or overly sensational clickbait words (e.g. do NOT use "Shocking", "Secret", "You Won't Believe", "This Changes Everything"). Instead, focus on interest, clarity, and authority (e.g., "Here's Why", "The Real Impact of", "A Complete Guide to", "Proven Strategies for").
+- Use curiosity gaps, numbers, or logical hooks (e.g., "7 Reasons...", "The Hidden History of...", "Why Experts Are Analyzing...").
 - Keep title under 65 characters but make every word count.
 
 Content Rules:
-- Open with a powerful hook — a shocking stat, bold claim, or provocative question in the first 2 sentences.
-- Write a comprehensive, engaging, and highly informative article directly about the topic.
+- Start the article with a concise, prominent "Key Takeaways" or "Executive Summary" bulleted blockquote at the very beginning of the content.
+- Open with a powerful, engaging hook in the first 2 sentences.
+- Use a conversational Q&A style where natural, including common search questions as headings (e.g., "What is Banksy known for?", "Why did the policy change?").
+- Ensure all sections use logical subheadings (H2, H3) and proper heading hierarchy (never skip heading levels).
+- Write a comprehensive, engaging, and highly informative article directly about the topic with high E-E-A-T (Expertise, Authoritativeness, Trustworthiness).
 - Do not artificially force a technology pivot if the topic is non-technical (e.g., sports, politics, entertainment, lifestyle). Cover the subject naturally.
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
-- Excerpt under 180 characters — make it intriguing so readers MUST click to find out more.
-- Meta title under 60 characters. Meta description under 160 characters — optimized for Google CTR.
-- Content should be 800-1200 words with 3-4 H2 sections. Each H2 should be equally gripping.
+- Excerpt under 180 characters — make it intriguing and descriptive of the benefit.
+- Meta title under 60 characters (must include main keyword). Meta description under 160 characters — high quality, conveying the benefit of reading.
+- Content should be 800-1200 words with 3-4 H2 sections and subheadings.
 - Include expert insights, surprising facts, actionable takeaways, and recent context.
 - End with a strong, memorable conclusion that leaves readers thinking.
 

@@ -81,17 +81,25 @@ export function StatsCounter({ totalArticles, totalCategories, totalViews }: Pro
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold: 0.3 }
+      { threshold: 0.05 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+
+    const timer = setTimeout(() => {
+      setInView(true);
+    }, 1500);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
   }, []);
 
   const stats: Stat[] = [
     { value: totalArticles, suffix: "+", label: "Articles Published", icon: STAT_ICONS.articles },
     { value: totalCategories, suffix: "", label: "Topics Covered", icon: STAT_ICONS.categories },
     { value: totalViews, suffix: "+", label: "Total Reads", icon: STAT_ICONS.views },
-    { value: 48, suffix: "/day", label: "New Articles Daily", icon: STAT_ICONS.frequency },
+    { value: 4, suffix: "/day", label: "New Articles Daily", icon: STAT_ICONS.frequency },
   ];
 
   return (

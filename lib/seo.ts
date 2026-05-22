@@ -89,7 +89,6 @@ export async function pingSearchEngines(): Promise<void> {
   if (!base) return;
   const sitemapUrl = encodeURIComponent(`${base}/sitemap.xml`);
   await Promise.allSettled([
-    fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`, { signal: AbortSignal.timeout(8000) }),
     fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`, { signal: AbortSignal.timeout(8000) })
   ]);
 }

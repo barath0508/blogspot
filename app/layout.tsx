@@ -221,7 +221,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
               </p>
               <p className="text-xs text-muted-foreground">
-                Powered by AI — publishing every 30 minutes.
+                Powered by AI — publishing every 6 hours.
               </p>
             </div>
           </div>

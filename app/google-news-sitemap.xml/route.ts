@@ -3,11 +3,11 @@ import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export async function GET() {
   const SITE_URL = getSiteUrl();
-  const { posts } = await getPublishedPosts();
+  const { posts } = await getPublishedPosts({ perPage: 100 });
 
   // Google News sitemap only accepts articles published in the last 2 days
   const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;
@@ -53,7 +53,7 @@ ${items}
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200"
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600"
     }
   });
 }

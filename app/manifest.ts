@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Trendly",
     short_name: "Trendly",
-    description: "Trending technology news and AI-powered insights — updated every 30 minutes.",
+    description: "Trending technology news and AI-powered insights — updated every 6 hours.",
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",

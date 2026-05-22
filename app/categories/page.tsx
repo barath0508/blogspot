@@ -162,7 +162,7 @@ export default async function CategoriesPage() {
             Diverse perspectives, <span className="text-primary">one publication.</span>
           </h1>
           <p className="mt-4 text-muted-foreground leading-relaxed">
-            Discover in-depth analysis, tutorials, and latest findings organized by tech sectors. Our AI generates comprehensive articles on these categories every 30 minutes.
+            Discover in-depth analysis, tutorials, and latest findings organized by tech sectors. Our AI generates comprehensive articles on these categories every 6 hours.
           </p>
         </header>
 

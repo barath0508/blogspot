@@ -2,10 +2,10 @@ import { getPublishedPosts } from "@/lib/posts";
 import { getSiteUrl } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
-const SITE_DESCRIPTION = "Trending technology news and AI-powered insights — updated every 30 minutes.";
+const SITE_DESCRIPTION = "Trending technology news and AI-powered insights — updated every 6 hours.";
 const ACCENT_COLOR = "#0d9488";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 function escapeXml(str: string) {
   return str
@@ -34,7 +34,7 @@ function markdownToHtml(md: string): string {
 
 export async function GET() {
   const SITE_URL = getSiteUrl();
-  const { posts } = await getPublishedPosts();
+  const { posts } = await getPublishedPosts({ perPage: 50 });
 
   const items = posts
     .slice(0, 50)
@@ -127,7 +127,7 @@ ${bodyHtml}
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       "X-Content-Type-Options": "nosniff"
     }
   });
