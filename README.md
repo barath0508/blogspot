@@ -78,7 +78,7 @@ The system operates autonomously to identify search trends, write high-quality, 
 ├── supabase                 # SQL migrations and database schema setup
 ├── types                    # TypeScript interfaces
 ├── middleware.ts            # Protects /admin routes
-└── vercel.json              # Vercel Cron Job configuration (runs every 6 hours)
+└── vercel.json              # Vercel Cron Job configuration (once daily for Hobby compatibility)
 ```
 
 ---
@@ -143,18 +143,22 @@ npm run build
 
 ## Automated Cron Configuration
 
-The publishing automation is triggered by Vercel Cron Jobs. It is defined in [vercel.json](file:///e:/Blog/vercel.json) to trigger the publish endpoint once every 6 hours (matching 4 posts daily):
+The publishing automation can be triggered by Vercel Cron Jobs or external scheduling services.
 
-```json
-{
-  "crons": [
-    {
-      "path": "/api/automation/publish",
-      "schedule": "0 */6 * * *"
-    }
-  ]
-}
-```
+> [!IMPORTANT]
+> **Vercel Hobby Plan Restriction:** Hobby accounts on Vercel are limited to running cron jobs **once per day**. Setting a higher frequency schedule (like every 6 hours) will cause Vercel deployments to fail. 
+> To bypass this limit and deploy successfully, [vercel.json](file:///e:/Blog/vercel.json) is configured to run once daily (`0 6 * * *`):
+> ```json
+> {
+>   "crons": [
+>     {
+>       "path": "/api/automation/publish",
+>       "schedule": "0 6 * * *"
+>     }
+>   ]
+> }
+> ```
+> To trigger the publication every 6 hours as desired without upgrading to Vercel Pro, set up a free scheduler on an external cron service (such as [cron-job.org](https://cron-job.org), [Upstash QStash](https://upstash.com), or GitHub Actions) to ping the secure endpoint `/api/automation/publish` every 6 hours.
 
 ### Manually trigger publication:
 ```bash
