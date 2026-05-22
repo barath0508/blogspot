@@ -83,7 +83,7 @@ export function CookieBanner() {
             We use cookies to improve your experience, analyze traffic, and serve personalized ads.
             Choose "Accept all" to enable analytics and ads, or "Reject non-essential" to disable them.{" "}
             <Link href="/cookie-policy" className="text-primary hover:underline underline-offset-2 font-medium">
-              Learn more
+              Read our Cookie Policy
             </Link>
           </p>
         </div>

@@ -38,14 +38,7 @@ const nextConfig: NextConfig = {
         source: "/",
         headers: [{ key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=3600" }]
       },
-      {
-        source: "/feed.xml",
-        headers: [{ key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" }]
-      },
-      {
-        source: "/(sitemap|robots|google-news-sitemap).xml",
-        headers: [{ key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" }]
-      },
+
       {
         source: "/(.*\\.(?:ico|png|svg|jpg|jpeg|webp|avif|woff2|woff|ttf))",
         headers: [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" }]

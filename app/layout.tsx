@@ -10,6 +10,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { TrendlyLogo } from "@/components/TrendlyLogo";
 import { CookieBanner } from "@/components/CookieBanner";
 import { CommandPalette } from "@/components/CommandPalette";
+import { ToastContainer } from "@/components/Toast";
 import { SearchTrigger } from "@/components/SearchTrigger";
 import { getSiteUrl } from "@/lib/seoHelper";
 import "./globals.css";
@@ -51,6 +52,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/category/technology", label: "Technology" },
   { href: "/categories", label: "Topics" },
+  { href: "/no", label: "No-as-a-Service" },
   { href: "/about", label: "About" },
 ];
 
@@ -228,6 +230,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </footer>
 
         <CommandPalette />
+        <ToastContainer />
         </ThemeProvider>
         <CookieBanner />
         <Analytics />
