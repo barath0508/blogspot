@@ -55,16 +55,46 @@ function extractKeywordsFromText(text: string, maxKeywords = 10): string[] {
     .slice(0, maxKeywords);
 }
 
-function buildMetaTitle(title: string, keywords: string[]): string {
-  const suffix = keywords.slice(0, 2).join(", ");
-  const candidate = suffix ? `${title.trim()} | ${suffix}` : title.trim();
-  return candidate.slice(0, 60).trim();
+function stripMarkdown(text: string): string {
+  return text
+    // Remove inline links [text](url) -> text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    // Remove images ![alt](url) -> empty
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "")
+    // Remove bold/italic formatting
+    .replace(/[*_~`]/g, "")
+    // Remove headers (# Title)
+    .replace(/^#+\s+/gm, "")
+    // Remove HTML tags
+    .replace(/<[^>]*>/g, "");
 }
 
-function buildMetaDescription(excerpt: string | null | undefined, content: string, keywords: string[]): string {
-  const source = (excerpt || content).replace(/\s+/g, " ").trim().slice(0, 150);
-  const keywordText = keywords.length ? ` Keywords: ${keywords.slice(0, 5).join(", ")}` : "";
-  return `${source}${keywordText}`.slice(0, 160).trim();
+function buildMetaTitle(title: string): string {
+  const cleanTitle = title.trim();
+  const brand = "Trendly";
+  if (cleanTitle.endsWith(brand)) {
+    return cleanTitle.slice(0, 60);
+  }
+  const suffix = ` | ${brand}`;
+  if (cleanTitle.length + suffix.length <= 60) {
+    return cleanTitle + suffix;
+  }
+  const maxTitleLength = 60 - suffix.length;
+  return cleanTitle.slice(0, maxTitleLength).trim() + suffix;
+}
+
+function buildMetaDescription(excerpt: string | null | undefined, content: string): string {
+  const rawText = excerpt || content;
+  const strippedText = stripMarkdown(rawText);
+  const cleanText = strippedText
+    .replace(/[\r\n]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (cleanText.length > 155) {
+    return cleanText.slice(0, 152).trim() + "...";
+  }
+  return cleanText;
 }
 
 export function generateSeoMetadata(options: GenerateSeoOptions) {
@@ -75,11 +105,11 @@ export function generateSeoMetadata(options: GenerateSeoOptions) {
 
   const meta_title = options.meta_title?.trim()
     ? options.meta_title.trim().slice(0, 60)
-    : buildMetaTitle(options.title, resolvedKeywords);
+    : buildMetaTitle(options.title);
 
   const meta_description = options.meta_description?.trim()
     ? options.meta_description.trim().slice(0, 160)
-    : buildMetaDescription(options.excerpt, options.content, resolvedKeywords);
+    : buildMetaDescription(options.excerpt, options.content);
 
   return { meta_title, meta_description, seo_keywords: resolvedKeywords };
 }
