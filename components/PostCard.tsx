@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { PostRecord } from "@/types/blog";
+import { isOptimizable } from "@/lib/seoHelper";
 
 const SITE_NAME = "Trendly";
 
@@ -18,16 +19,12 @@ function isNew(publishedAt: string | null) {
   return Date.now() - new Date(publishedAt).getTime() < 12 * 60 * 60 * 1000;
 }
 
-function isExternal(src: string) {
-  return src.includes("pollinations.ai") || src.includes("unsplash.com") || src.includes("loremflickr.com");
-}
-
 function PostImage({ src, alt, priority = false, sizes }: { src: string; alt: string; priority?: boolean; sizes: string }) {
   const [error, setError] = useState(false);
   if (error || !src) {
     return (
       <div className="absolute inset-0 bg-secondary flex items-center justify-center">
-        <span className="font-serif text-3xl font-bold text-muted-foreground/30">T</span>
+        <span className="font-serif text-3xl font-bold text-muted-foreground/60">T</span>
       </div>
     );
   }
@@ -38,7 +35,7 @@ function PostImage({ src, alt, priority = false, sizes }: { src: string; alt: st
       fill
       priority={priority}
       loading={priority ? undefined : "lazy"}
-      unoptimized={isExternal(src)}
+      unoptimized={!isOptimizable(src)}
       className="object-cover transition-transform duration-500 group-hover:scale-105"
       sizes={sizes}
       onError={() => setError(true)}

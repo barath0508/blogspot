@@ -190,7 +190,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 { title: "Company", links: FOOTER_LINKS.company },
               ] as const).map((col) => (
                 <div key={col.title}>
-                  <h4 className="mb-4 text-sm font-semibold text-foreground">{col.title}</h4>
+                  <p className="mb-4 text-sm font-semibold text-foreground">{col.title}</p>
                   <ul className="space-y-2.5">
                     {col.links.map((l) => (
                       <li key={l.href}>
@@ -202,7 +202,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               ))}
 
               <div>
-                <h4 className="mb-4 text-sm font-semibold text-foreground">Legal</h4>
+                <p className="mb-4 text-sm font-semibold text-foreground">Legal</p>
                 <ul className="space-y-2.5">
                   {[
                     { label: "Privacy Policy", href: "/privacy-policy" },

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { isOptimizable } from "@/lib/seoHelper";
 
 type ReadNextPost = {
   slug: string;
@@ -72,7 +73,7 @@ export function ReadNextBar({ post }: { post: ReadNextPost | null }) {
                 src={post.cover_image}
                 alt={post.title}
                 fill
-                unoptimized
+                unoptimized={!isOptimizable(post.cover_image)}
                 className="object-cover"
                 sizes="80px"
               />

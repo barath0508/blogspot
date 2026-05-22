@@ -350,7 +350,7 @@ export default async function Home({
                     <div className="space-y-4">
                       {popularPosts.map((pop, idx) => (
                         <Link key={pop.slug} href={`/blog/${pop.slug}`} className="flex gap-4 group">
-                          <span className="font-serif text-xl font-extrabold text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0 w-6 self-start mt-0.5">
+                          <span className="font-serif text-xl font-extrabold text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0 w-6 self-start mt-0.5">
                             {String(idx + 1).padStart(2, '0')}
                           </span>
                           <div className="min-w-0">

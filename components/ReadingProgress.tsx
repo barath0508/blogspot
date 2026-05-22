@@ -19,7 +19,7 @@ export function ReadingProgress() {
   return (
     <div
       className="reading-progress-bar"
-      style={{ width: `${progress}%` }}
+      style={{ transform: `scaleX(${progress / 100})`, transformOrigin: "left" }}
       role="progressbar"
       aria-valuenow={Math.round(progress)}
       aria-valuemin={0}

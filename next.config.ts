@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
 
       {
         source: "/(.*\\.(?:ico|png|svg|jpg|jpeg|webp|avif|woff2|woff|ttf))",
-        headers: [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" }]
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }]
       }
     ];
   }

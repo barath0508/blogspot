@@ -19,7 +19,7 @@ import { CopyCodeButton } from "@/components/CopyCodeButton";
 import { ReadNextBar } from "@/components/ReadNextBar";
 import { getPublishedPostBySlug, getPublishedPosts } from "@/lib/posts";
 import { getSupabase } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/seoHelper";
+import { getSiteUrl, isOptimizable } from "@/lib/seoHelper";
 
 const SITE_URL = getSiteUrl();
 const SITE_NAME = "Trendly";
@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }: Props) {
                   alt={post.title}
                   fill
                   priority
-                  unoptimized
+                  unoptimized={!isOptimizable(post.cover_image)}
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 800px"
                 />
@@ -248,7 +248,7 @@ export default async function BlogPostPage({ params }: Props) {
                         src={String(src ?? "")}
                         alt={String(alt || post.title || "Blog post image")}
                         fill
-                        unoptimized
+                        unoptimized={!isOptimizable(typeof src === "string" ? src : undefined)}
                         className="object-cover"
                         loading="lazy"
                         sizes="(max-width: 768px) 100vw, 800px"
