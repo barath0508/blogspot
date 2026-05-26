@@ -258,6 +258,9 @@ export default async function BlogPostPage({ params }: Props) {
                   pre: ({ children }) => (
                     <CopyCodeButton>{children}</CopyCodeButton>
                   ),
+                  h1: ({ children }) => (
+                    <h2 className="font-serif text-2xl font-bold text-foreground mt-12 mb-4 pb-2 border-b border-border/40">{children}</h2>
+                  ),
                   h2: ({ children }) => (
                     <h2 className="font-serif text-2xl font-bold text-foreground mt-12 mb-4 pb-2 border-b border-border/40">{children}</h2>
                   ),

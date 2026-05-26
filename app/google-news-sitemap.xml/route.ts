@@ -5,39 +5,55 @@ const SITE_NAME = "Trendly";
 
 export const revalidate = 300;
 
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+}
+
 export async function GET() {
   const SITE_URL = getSiteUrl();
   const { posts } = await getPublishedPosts({ perPage: 100 });
 
   // Google News sitemap only accepts articles published in the last 2 days
   const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;
-  const recentPosts = posts.filter(
+  let recentPosts = posts.filter(
     (p) => p.published_at && new Date(p.published_at).getTime() > twoDaysAgo
   );
+
+  // Fallback: If no posts in the last 48 hours, use the 5 most recent posts
+  // to avoid sending an empty sitemap which causes format/empty validation errors in search engines.
+  if (recentPosts.length === 0 && posts.length > 0) {
+    recentPosts = posts.slice(0, 5);
+  }
 
   const items = recentPosts
     .map((post) => {
       const pubDate = new Date(post.published_at!).toISOString();
-      const keywords = post.seo_keywords?.slice(0, 10).join(", ") ?? "";
       const coverImage = post.cover_image ?? `${SITE_URL}/og-default.png`;
+      const url = `${SITE_URL}/blog/${post.slug}`;
+
       return `  <url>
-    <loc>${SITE_URL}/blog/${post.slug}</loc>
+    <loc>${escapeXml(url)}</loc>
     <news:news>
       <news:publication>
-        <news:name>${SITE_NAME}</news:name>
+        <news:name>${escapeXml(SITE_NAME)}</news:name>
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${pubDate}</news:publication_date>
-      <news:title><![CDATA[${post.title}]]></news:title>
-      <news:keywords><![CDATA[${keywords}]]></news:keywords>
-      <news:genres>Blog</news:genres>
+      <news:title>${escapeXml(post.title)}</news:title>
     </news:news>
     <image:image>
-      <image:loc>${coverImage}</image:loc>
-      <image:title><![CDATA[${post.title}]]></image:title>
+      <image:loc>${escapeXml(coverImage)}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
     </image:image>
-    <lastmod>${pubDate}</lastmod>
-    <priority>1.0</priority>
   </url>`;
     })
     .join("\n");

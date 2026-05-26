@@ -1,0 +1,15 @@
+# Trendly
+
+> A modern publication exploring technology, AI, and the ideas shaping our future. Written by experts and powered by Google Gemini AI.
+
+## Main Navigation
+- [Home](https://blogspot-phi.vercel.app/): The main landing page with the latest and trending articles.
+- [Technology](https://blogspot-phi.vercel.app/category/technology): Articles and analyses focusing on technology breakthroughs.
+- [Topics](https://blogspot-phi.vercel.app/categories): Index of all available article categories.
+- [No-as-a-Service](https://blogspot-phi.vercel.app/no): A showcase of our programmatic integration capabilities.
+- [About Us](https://blogspot-phi.vercel.app/about): Learn how our automated publication flow operates.
+
+## RSS and Feeds
+- [RSS Feed](https://blogspot-phi.vercel.app/feed.xml): Real-time XML feed containing the latest published posts.
+- [Google News Sitemap](https://blogspot-phi.vercel.app/google-news-sitemap.xml): A dedicated Google News sitemap containing articles published in the last 48 hours.
+- [Sitemap](https://blogspot-phi.vercel.app/sitemap.xml): Standard XML sitemap listing posts, categories, tags, and static pages.

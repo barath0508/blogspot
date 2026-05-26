@@ -128,6 +128,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 pl-[calc(1rem+env(safe-area-inset-left,0px))] pr-[calc(1rem+env(safe-area-inset-right,0px))] lg:px-8 lg:pl-[calc(2rem+env(safe-area-inset-left,0px))] lg:pr-[calc(2rem+env(safe-area-inset-right,0px))]">
             <Link href="/" className="flex items-center group" aria-label={`${SITE_NAME} — Home`}>
               <TrendlyLogo className="h-7 w-auto text-foreground transition-transform duration-300 group-hover:scale-[1.02]" />
+              <span className="sr-only">{SITE_NAME} Home</span>
             </Link>
 
             <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
@@ -180,6 +181,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
                       className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">
                       {s.icon}
+                      <span className="sr-only">{s.label}</span>
                     </a>
                   ))}
                 </div>

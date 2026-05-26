@@ -26,8 +26,9 @@ export function isOptimizable(src: string | null | undefined): boolean {
   }
 
   // Allowed external domains matching next.config.ts remotePatterns
+  // Exclude image.pollinations.ai because dynamic AI image generation on the fly exceeds
+  // Next.js image optimization timeouts, causing 504/500 errors (broken internal images).
   const optimizableHosts = [
-    "image.pollinations.ai",
     "images.unsplash.com",
     "source.unsplash.com",
     "loremflickr.com",
