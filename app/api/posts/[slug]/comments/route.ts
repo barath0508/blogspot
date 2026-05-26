@@ -38,7 +38,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
 
   const { data, error } = await supabaseAdmin
     .from("comments")
-    .insert([{ post_id: post.id, author_name: authorName, body: commentBody, is_approved: true }])
+    .insert([{ post_id: post.id, author_name: authorName, body: commentBody, is_approved: false }])
     .select("id,author_name,body,created_at")
     .single();
 

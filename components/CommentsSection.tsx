@@ -35,12 +35,10 @@ export function CommentsSection({ slug, initialComments }: Props) {
     });
     setBusy(false);
     if (!res.ok) return alert("Unable to post comment");
-    const data = await res.json();
-    setComments((prev) => [data.comment, ...prev]);
     setName("");
     setBody("");
     setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
+    setTimeout(() => setSuccess(false), 5000);
   };
 
   return (
@@ -87,7 +85,7 @@ export function CommentsSection({ slug, initialComments }: Props) {
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
-              Posted!
+              Submitted for moderation!
             </span>
           )}
         </div>

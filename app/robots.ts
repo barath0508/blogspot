@@ -22,19 +22,23 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "GPTBot",
-        disallow: ["/"]
+        allow: ["/", "/blog/", "/category/", "/tag/"],
+        disallow: ["/admin", "/api/", "/login"]
       },
       {
         userAgent: "CCBot",
-        disallow: ["/"]
+        allow: ["/", "/blog/", "/category/", "/tag/"],
+        disallow: ["/admin", "/api/", "/login"]
       },
       {
         userAgent: "anthropic-ai",
-        disallow: ["/"]
+        allow: ["/", "/blog/", "/category/", "/tag/"],
+        disallow: ["/admin", "/api/", "/login"]
       },
       {
         userAgent: "Claude-Web",
-        disallow: ["/"]
+        allow: ["/", "/blog/", "/category/", "/tag/"],
+        disallow: ["/admin", "/api/", "/login"]
       },
       {
         userAgent: "Omgilibot",

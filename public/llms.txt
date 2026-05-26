@@ -2,6 +2,9 @@
 
 > A modern publication exploring technology, AI, and the ideas shaping our future. Written by experts and powered by Google Gemini AI.
 
+## Dynamic AI Context
+- [Full Text Feed](https://blogspot-phi.vercel.app/llms-full.txt): Consolidated plain-text markdown feed containing the full text of our 20 most recent posts, optimized for LLM ingestion.
+
 ## Main Navigation
 - [Home](https://blogspot-phi.vercel.app/): The main landing page with the latest and trending articles.
 - [Technology](https://blogspot-phi.vercel.app/category/technology): Articles and analyses focusing on technology breakthroughs.

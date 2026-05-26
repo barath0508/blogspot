@@ -382,6 +382,28 @@ export default async function BlogPostPage({ params }: Props) {
               <p className="text-xs font-bold text-foreground uppercase tracking-widest mb-3">Share</p>
               <ShareButtons url={postUrl} title={post.title} />
             </div>
+            {/* Affiliate / Sponsor Promo Card */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 h-16 w-16 bg-primary/10 rounded-full blur-lg" />
+              <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2 flex items-center gap-1">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                </svg>
+                Partner Offer
+              </p>
+              <h4 className="text-xs font-bold text-foreground">Need High-Performance Hosting?</h4>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                Deploy your Next.js application globally with high-speed hosting and databases. Get 75% off using our partner link.
+              </p>
+              <a
+                href={process.env.NEXT_PUBLIC_AFFILIATE_LINK || "https://hostinger.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-lg bg-primary py-1.5 text-center text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Claim Discount
+              </a>
+            </div>
           </aside>
         </div>
       </main>
