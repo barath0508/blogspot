@@ -145,6 +145,7 @@ Title Rules (CRITICAL for click-through rate & SEO):
 - Keep title under 65 characters but make every word count.
 
 Content Rules:
+- Keyword Optimization Strategy (SEMrush Keyword Strategy): If the input Topic is broad or has high-competition (e.g. "artificial intelligence", "coding tools"), automatically refine and narrow it down into a highly specific, high-intent, long-tail search query or a detailed conversational "Jobs-to-be-Done" question (e.g. "How to automate client onboarding using Agentic AI" or "Best open-source coding libraries for React developers in 2026") that is easy to rank for on Google and Answer Engines (low competition, high target audience value). Generate the title, content, meta tags, and slug targeting this refined keyword.
 - Start the article with a concise, prominent "Key Takeaways" or "Executive Summary" bulleted blockquote at the very beginning of the content.
 - Open with a powerful, engaging hook in the first 2 sentences.
 - Use a conversational Q&A style where natural, including common search questions as headings (e.g., "What is Banksy known for?", "Why did the policy change?").
