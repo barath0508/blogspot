@@ -258,6 +258,19 @@ export default async function BlogPostPage({ params }: Props) {
                   pre: ({ children }) => (
                     <CopyCodeButton>{children}</CopyCodeButton>
                   ),
+                  a: ({ href, children }) => {
+                    const isExternal = href?.startsWith("http");
+                    return (
+                      <a
+                        href={href}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noopener noreferrer" : undefined}
+                        className="text-primary hover:underline font-medium transition-colors"
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
                   h1: ({ children }) => (
                     <h2 className="font-serif text-2xl font-bold text-foreground mt-12 mb-4 pb-2 border-b border-border/40">{children}</h2>
                   ),

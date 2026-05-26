@@ -150,6 +150,7 @@ Content Rules:
 - Use a conversational Q&A style where natural, including common search questions as headings (e.g., "What is Banksy known for?", "Why did the policy change?").
 - Ensure all sections use logical subheadings (H2, H3) and proper heading hierarchy (never skip heading levels).
 - Write a comprehensive, engaging, and highly informative article directly about the topic with high E-E-A-T (Expertise, Authoritativeness, Trustworthiness).
+- Throughout the article, naturally integrate 2-4 high-quality reference links in Markdown format "[Anchor Text](URL)" for key facts, organizations, tools, or official documentation (e.g., pointing to Wikipedia, official project sites, or reputable news sources). Make sure the URLs are real, valid, and secure (HTTPS).
 - Do not artificially force a technology pivot if the topic is non-technical (e.g., sports, politics, entertainment, lifestyle). Cover the subject naturally.
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
 - Excerpt under 180 characters — make it intriguing and descriptive of the benefit.
