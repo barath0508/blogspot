@@ -335,6 +335,47 @@ ${links.join("\n")}
 `;
 }
 
+function getTrigrams(str: string): Record<string, number> {
+  const clean = str.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const trigrams: Record<string, number> = {};
+  for (let i = 0; i < clean.length - 2; i++) {
+    const trigram = clean.substring(i, i + 3);
+    trigrams[trigram] = (trigrams[trigram] || 0) + 1;
+  }
+  return trigrams;
+}
+
+function cosineSimilarity(strA: string, strB: string): number {
+  const vecA = getTrigrams(strA);
+  const vecB = getTrigrams(strB);
+
+  const keysA = Object.keys(vecA);
+  const keysB = Object.keys(vecB);
+  
+  if (keysA.length === 0 || keysB.length === 0) return 0;
+
+  let dotProduct = 0;
+  for (const key of keysA) {
+    if (vecB[key]) {
+      dotProduct += vecA[key] * vecB[key];
+    }
+  }
+
+  let magA = 0;
+  for (const val of Object.values(vecA)) {
+    magA += val * val;
+  }
+  magA = Math.sqrt(magA);
+
+  let magB = 0;
+  for (const val of Object.values(vecB)) {
+    magB += val * val;
+  }
+  magB = Math.sqrt(magB);
+
+  return dotProduct / (magA * magB);
+}
+
 export async function publishSpecificTopic(topic: string) {
   const post = await generatePostWithGemini(topic);
   const supabaseAdmin = getSupabaseAdmin();
@@ -346,6 +387,29 @@ export async function publishSpecificTopic(topic: string) {
   const { data: existing } = await supabaseAdmin.from("posts").select("id").eq("slug", slug).maybeSingle();
   if (existing) {
     return { status: "skipped", reason: "already_published", topic, slug };
+  }
+
+  // Deduplication check: Compare title and slug similarity with existing posts to prevent cannibalization
+  const { data: existingPosts } = await supabaseAdmin.from("posts").select("title, slug");
+  if (existingPosts && existingPosts.length > 0) {
+    for (const p of existingPosts) {
+      const titleSim = cosineSimilarity(post.title, p.title);
+      // Strip day suffix (e.g., -2026-05-26) from slug comparison to check base similarity
+      const cleanSlug = p.slug.replace(/-\d{4}-\d{2}-\d{2}$/, "");
+      const slugSim = cosineSimilarity(baseSlug, cleanSlug);
+
+      if (titleSim > 0.85 || slugSim > 0.85) {
+        console.warn(`[AutoPublisher] Skipped publishing duplicate post. Title similarity: ${titleSim.toFixed(2)}, Slug similarity: ${slugSim.toFixed(2)} with "${p.title}"`);
+        return {
+          status: "skipped",
+          reason: "duplicate_content",
+          topic,
+          slug,
+          similarity: Math.max(titleSim, slugSim),
+          matchedWith: p.title
+        };
+      }
+    }
   }
 
   const coverImage = generateCoverImageUrl(post.coverImageKeyword, post.category);

@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = post.categories?.[0]?.name;
   const keywords = post.seo_keywords?.length ? post.seo_keywords : undefined;
   return {
-    title, description, keywords,
+    title: { absolute: title }, description, keywords,
     authors: [{ name: SITE_NAME, url: SITE_URL }],
     creator: SITE_NAME, publisher: SITE_NAME,
     category: category ?? "Technology",
