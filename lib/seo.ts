@@ -169,7 +169,14 @@ export function buildPageMetadata(options: BuildPageMetadataOptions): Metadata {
     title: options.title,
     description: options.description,
     keywords: options.keywords ?? ["technology", "AI", "news", "analysis", "Trendly"],
-    alternates: { canonical: options.url },
+    alternates: {
+      canonical: options.url,
+      languages: {
+        "en-US": options.url,
+        "en-GB": options.url,
+        "x-default": options.url,
+      },
+    },
     robots: { index: !options.noindex, follow: true },
     openGraph: {
       title: options.title,

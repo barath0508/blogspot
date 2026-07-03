@@ -56,10 +56,42 @@ export default function About() {
     }
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is the content on Trendly written by humans?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, all articles on Trendly are autonomously generated using Google Gemini based on trending search queries. Every article goes through automatic structure checks before publishing."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How often is new content published?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trendly publishes new technology, AI, and digital innovation articles automatically every 6 hours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Trendly free to read?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Trendly is completely free to read, and readers can bookmark articles without creating an account."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Script id="about-breadcrumb-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Script id="about-page-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }} />
+      <Script id="about-faq-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <main className="mx-auto max-w-4xl px-4 py-12 lg:px-8 lg:py-20">
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -150,6 +182,19 @@ export default function About() {
           <p className="text-muted-foreground leading-relaxed">
             In the interest of full transparency, all articles on {SITE_NAME} are generated using artificial intelligence (Google Gemini). While we strive for accuracy, AI-generated content may contain errors. We encourage readers to verify important information from primary sources. See our <Link href="/disclaimer" className="text-primary hover:underline">Disclaimer</Link> for full details.
           </p>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="mb-16">
+          <h2 className="font-serif text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {faqJsonLd.mainEntity.map((item, index) => (
+              <div key={index} className="rounded-lg border border-border/40 bg-card p-6 transition-all hover:border-primary/40">
+                <h3 className="font-semibold text-foreground text-base">{item.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{item.acceptedAnswer.text}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Contact */}

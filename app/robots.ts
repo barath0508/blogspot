@@ -8,37 +8,38 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/admin/", "/api/", "/login"]
+        disallow: ["/admin", "/admin/", "/api/", "/login", "/checkout", "/test.html", "/*-draft.html"],
+        crawlDelay: 1
       },
       {
         userAgent: "Googlebot",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login", "/?q="]
+        disallow: ["/admin", "/api/", "/login", "/?q=", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "Bingbot",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login", "/?q="]
+        disallow: ["/admin", "/api/", "/login", "/?q=", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "GPTBot",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login"]
+        disallow: ["/admin", "/api/", "/login", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "CCBot",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login"]
+        disallow: ["/admin", "/api/", "/login", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "anthropic-ai",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login"]
+        disallow: ["/admin", "/api/", "/login", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "Claude-Web",
         allow: ["/", "/blog/", "/category/", "/tag/"],
-        disallow: ["/admin", "/api/", "/login"]
+        disallow: ["/admin", "/api/", "/login", "/checkout", "/test.html", "/*-draft.html"]
       },
       {
         userAgent: "Omgilibot",

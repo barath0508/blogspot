@@ -12,6 +12,7 @@ import { CookieBanner } from "@/components/CookieBanner";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ToastContainer } from "@/components/Toast";
 import { SearchTrigger } from "@/components/SearchTrigger";
+import { NewsletterModal } from "@/components/NewsletterModal";
 import { getSiteUrl } from "@/lib/seoHelper";
 import "./globals.css";
 
@@ -34,7 +35,15 @@ export const metadata: Metadata = {
   category: "technology",
   formatDetection: { email: false, address: false, telephone: false },
   robots: { index: true, follow: true, nocache: false, googleBot: { index: true, follow: true, noimageindex: false, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 } },
-  alternates: { canonical: SITE_URL, types: { "application/rss+xml": `${SITE_URL}/feed.xml` } },
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      "en-US": SITE_URL,
+      "en-GB": SITE_URL,
+      "x-default": SITE_URL,
+    },
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` }
+  },
   verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "google4867b014d6b90931", other: { "msvalidate.01": [process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION || "f8d17c11209945da88ec4617d4cec8fb"] } },
   openGraph: { title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, url: SITE_URL, siteName: SITE_NAME, type: "website", locale: "en_US", images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }] },
   twitter: { card: "summary_large_image", title: `${SITE_NAME} — Technology, AI & Ideas`, description: SITE_DESCRIPTION, site: "@trendly", images: [`${SITE_URL}/og-default.png`] }
@@ -45,6 +54,28 @@ const websiteJsonLd = {
   "@graph": [
     { "@type": "WebSite", "@id": `${SITE_URL}/#website`, name: SITE_NAME, url: SITE_URL, description: SITE_DESCRIPTION, inLanguage: "en-US", publisher: { "@id": `${SITE_URL}/#organization` }, potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/?q={search_term_string}` }, "query-input": "required name=search_term_string" } },
     { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", "@id": `${SITE_URL}/#logo`, url: `${SITE_URL}/icon-512.png`, width: 512, height: 512, caption: SITE_NAME }, sameAs: ["https://twitter.com/trendly","https://linkedin.com/company/trendly"] }
+  ]
+};
+
+const webApplicationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": SITE_NAME,
+  "url": SITE_URL,
+  "image": `${SITE_URL}/og-default.png`,
+  "description": SITE_DESCRIPTION,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Web Browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Automated AI publishing every 6 hours",
+    "Trend-based content generation using Gemini",
+    "Interactive saved articles and bookmarking",
+    "Dynamic RSS, standard, and Google News sitemaps"
   ]
 };
 
@@ -98,8 +129,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="author" href={`${SITE_URL}/humans.txt`} />
         <link rel="sitemap" type="application/xml" href={`${SITE_URL}/sitemap.xml`} />
         <link rel="sitemap" type="application/xml" title="Google News Sitemap" href={`${SITE_URL}/google-news-sitemap.xml`} />
-        {/* Google Subscribe with Google (SwG) — Google News integration */}
-        <script async type="application/javascript" src="https://news.google.com/swg/js/v1/swg-basic.js" />
+        <Script src="https://news.google.com/swg/js/v1/swg-basic.js" strategy="lazyOnload" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
@@ -122,6 +152,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </>
         )}
         <Script id="website-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        <Script id="webapplication-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationJsonLd) }} />
 
         {/* ── Header ── */}
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
@@ -233,6 +264,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <CommandPalette />
         <ToastContainer />
+        <NewsletterModal />
         </ThemeProvider>
         <CookieBanner />
         <Analytics />

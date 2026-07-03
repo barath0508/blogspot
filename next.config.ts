@@ -42,6 +42,33 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*\\.(?:ico|png|svg|jpg|jpeg|webp|avif|woff2|woff|ttf))",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }]
+      },
+      {
+        source: "/draft-page.html",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }]
+      },
+      {
+        source: "/duplicate-blog.html",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }]
+      },
+      {
+        source: "/admin/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }]
+      }
+    ];
+  },
+
+  async redirects() {
+    return [
+      {
+        source: "/old-page-name.html",
+        destination: "/new-canonical-page.html",
+        permanent: true
+      },
+      {
+        source: "/another-old-url",
+        destination: "/canonical-destination",
+        permanent: true
       }
     ];
   }
