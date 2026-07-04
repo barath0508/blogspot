@@ -103,7 +103,8 @@ function extractAndRepairJson(raw: string): unknown {
   return JSON.parse(result);
 }
 
-async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
+// Low-level Gemini caller shared by full-article generation and the cheap topic classifier below.
+async function callGemini(prompt: string, opts: { maxOutputTokens?: number; temperature?: number; models?: string[] } = {}): Promise<string> {
   const rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || "";
   const apiKeys = rawKeys.split(",").map(k => k.trim()).filter(Boolean);
   if (!apiKeys.length) throw new Error("No Gemini API keys found in environment.");
@@ -117,10 +118,110 @@ async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
     "gemini-flash-latest",
   ];
 
-  const modelsToTry = configuredModel
+  const modelsToTry = opts.models ?? (configuredModel
     ? [configuredModel, ...defaultModels.filter(m => m !== configuredModel)]
-    : defaultModels;
+    : defaultModels);
 
+  let text = "";
+  const allErrors: string[] = [];
+
+  outer: for (const model of modelsToTry) {
+    for (const apiKey of apiKeys) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      assertAllowedUrl(geminiUrl);
+
+      const response = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: opts.temperature ?? 0.7,
+            maxOutputTokens: opts.maxOutputTokens ?? 8192,
+            responseMimeType: "application/json",
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        let errorText = await response.text();
+        // Truncate the error text to avoid blowing up the payload size and hitting Vercel's 4.5MB limit
+        const truncated = errorText.length > 500 ? errorText.substring(0, 500) + '...[truncated]' : errorText;
+        allErrors.push(`[${model}] ${response.status}: ${truncated}`);
+
+        const isKeyError =
+          response.status === 429 ||
+          response.status === 403 ||
+          truncated.includes("API_KEY_INVALID") ||
+          truncated.includes("API key expired");
+
+        if (isKeyError) {
+          // Rate limit / Quota exceeded / Expired Key -> try the next key
+          console.warn(`[AutoPublisher] Key error (${response.status}) on model ${model}. Trying next key...`);
+          continue;
+        }
+        // Other errors (e.g., 400 Bad Request, 404 model not found) -> try next model
+        console.warn(`[AutoPublisher] Model error (${response.status}) on model ${model}. Trying next model...`);
+        break;
+      }
+
+      const data = await response.json();
+      text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      if (text) break outer;
+    }
+  }
+
+  if (!text) {
+    const tried = modelsToTry.join(", ");
+    throw new Error(`Gemini failed across models [${tried}].\nAll Errors:\n${allErrors.join('\n')}`);
+  }
+
+  return text;
+}
+
+// Trendly only covers technology, AI, science, and tech business — reject trending topics that would
+// force an off-brand article (sports, celebrities, entertainment, religious/cultural events, general
+// politics). This is why the site had drifted into cricket/Bollywood/football content: Google Trends
+// returns generic daily trends, and nothing previously filtered them before generation.
+const BANNED_TITLE_PHRASES = [
+  "shocking", "you won't believe", "won't believe", "secret behind", "the secret",
+  "nobody's talking about", "changes everything", "doctors hate", "this one trick",
+];
+
+async function isOnBrandTopic(topic: string): Promise<boolean> {
+  const prompt = `You are the strict content-scope gatekeeper for "Trendly", a publication that covers ONLY: technology, artificial intelligence & machine learning, software/product engineering, cybersecurity, science & research breakthroughs, and startup/tech business news.
+
+Trending topic to evaluate: "${topic}"
+
+Decide whether a genuine, non-forced article connecting this exact topic to technology, AI, science, or tech business could be written, without inventing a fake angle. REJECT topics that are fundamentally about: sports (matches, athletes, teams, tournaments), celebrities/entertainment (actors, musicians, movies, TV shows, influencers), religious or cultural holidays/observances, general politics/government/elections/public figures (unless the topic is specifically about tech policy, AI regulation, or digital infrastructure), and lifestyle/relationship content.
+
+Respond with ONLY this JSON and nothing else: {"relevant": true or false}`;
+
+  try {
+    const text = await callGemini(prompt, {
+      temperature: 0,
+      maxOutputTokens: 30,
+      models: ["gemini-2.0-flash", "gemini-flash-latest"],
+    });
+    const parsed = extractAndRepairJson(text) as { relevant?: boolean };
+    return parsed.relevant === true;
+  } catch {
+    // Fail safe: if we can't confidently classify a topic, don't publish it off-brand.
+    return false;
+  }
+}
+
+/** Filters a raw trending-topics list down to at most `limit` topics that fit Trendly's tech/AI/science/business scope. */
+export async function filterOnBrandTopics(topics: string[], limit: number): Promise<string[]> {
+  const onBrand: string[] = [];
+  for (const topic of topics) {
+    if (onBrand.length >= limit) break;
+    if (await isOnBrandTopic(topic)) onBrand.push(topic);
+  }
+  return onBrand;
+}
+
+async function generatePostWithGemini(topic: string): Promise<GeneratedPost> {
   const prompt = `
 You are a world-class digital journalist and content strategist known for writing authoritative, high-click-rate articles that rank on Google and provide high value to readers and AI systems alike. Your goal is to produce content that grabs attention with interest and expertise, keeps readers hooked, and ranks on Google. Return only valid JSON with this exact shape:
 {
@@ -152,7 +253,7 @@ Content Rules:
 - Ensure all sections use logical subheadings (H2, H3) and proper heading hierarchy (never skip heading levels).
 - Write a comprehensive, engaging, and highly informative article directly about the topic with high E-E-A-T (Expertise, Authoritativeness, Trustworthiness).
 - Throughout the article, naturally integrate 2-4 high-quality reference links in Markdown format "[Anchor Text](URL)" for key facts, organizations, tools, or official documentation (e.g., pointing to Wikipedia, official project sites, or reputable news sources). Make sure the URLs are real, valid, and secure (HTTPS).
-- Do not artificially force a technology pivot if the topic is non-technical (e.g., sports, politics, entertainment, lifestyle). Cover the subject naturally.
+- This topic has already been screened as relevant to Trendly's beat (technology, AI, science, and tech business). Write it from that angle — do not drift into unrelated sports/entertainment/political commentary.
 - MUST write the entire post exclusively in English, regardless of the origin or topic.
 - Excerpt under 180 characters — make it intriguing and descriptive of the benefit.
 - Meta title under 60 characters (must include main keyword). Meta description under 160 characters — high quality, conveying the benefit of reading.
@@ -168,60 +269,7 @@ imagePhrases Rules:
 - Do not include code fences around JSON.
 `;
 
-  let text = "";
-  let lastError = "";
-  const allErrors: string[] = [];
-
-  outer: for (const model of modelsToTry) {
-    for (const apiKey of apiKeys) {
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      assertAllowedUrl(geminiUrl);
-
-      const response = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 8192, // ✅ FIXED: prevent truncation on long articles
-            responseMimeType: "application/json",
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        let errorText = await response.text();
-        // Truncate the error text to avoid blowing up the payload size and hitting Vercel's 4.5MB limit
-        lastError = errorText.length > 500 ? errorText.substring(0, 500) + '...[truncated]' : errorText;
-        allErrors.push(`[${model}] ${response.status}: ${lastError}`);
-        
-        const isKeyError =
-          response.status === 429 ||
-          response.status === 403 ||
-          lastError.includes("API_KEY_INVALID") ||
-          lastError.includes("API key expired");
-
-        if (isKeyError) {
-          // Rate limit / Quota exceeded / Expired Key -> try the next key
-          console.warn(`[AutoPublisher] Key error (${response.status}) on model ${model}. Trying next key...`);
-          continue;
-        }
-        // Other errors (e.g., 400 Bad Request, 404 model not found) -> try next model
-        console.warn(`[AutoPublisher] Model error (${response.status}) on model ${model}. Trying next model...`);
-        break;
-      }
-
-      const data = await response.json();
-      text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      if (text) break outer;
-    }
-  }
-
-  if (!text) {
-    const tried = modelsToTry.join(", ");
-    throw new Error(`Gemini failed across models [${tried}] and ${apiKeys.length} key(s).\nAll Errors:\n${allErrors.join('\n')}`);
-  }
+  const text = await callGemini(prompt, { temperature: 0.7, maxOutputTokens: 8192 });
 
   const parsed = extractAndRepairJson(text) as GeneratedPost;
   if (!parsed.title || !parsed.content || !parsed.excerpt) {
@@ -380,6 +428,13 @@ function cosineSimilarity(strA: string, strB: string): number {
 export async function publishSpecificTopic(topic: string) {
   const post = await generatePostWithGemini(topic);
   const supabaseAdmin = getSupabaseAdmin();
+
+  const lowerTitle = post.title.toLowerCase();
+  const bannedPhrase = BANNED_TITLE_PHRASES.find((phrase) => lowerTitle.includes(phrase));
+  if (bannedPhrase) {
+    console.warn(`[AutoPublisher] Skipped publishing clickbait-flagged title: "${post.title}" (matched "${bannedPhrase}")`);
+    return { status: "skipped", reason: "failed_quality_gate", topic, matchedPhrase: bannedPhrase };
+  }
 
   const baseSlug = slugify(post.title) || slugify(topic) || "trending-topic";
   const daySuffix = new Date().toISOString().slice(0, 10);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchTrendingTopics, publishSpecificTopic } from "@/lib/automation/autoPublisher";
+import { fetchTrendingTopics, filterOnBrandTopics, publishSpecificTopic } from "@/lib/automation/autoPublisher";
 import { timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
@@ -42,12 +42,19 @@ export async function GET(request: Request) {
   let topics: string[] = [];
 
   try {
-    topics = await fetchTrendingTopics(count);
+    // Google Trends returns generic daily trends (sports, celebrities, etc.), so we pull a wider
+    // raw pool and filter it down to topics that actually fit Trendly's tech/AI/science/business beat.
+    const rawTopics = await fetchTrendingTopics(Math.min(count * 5, 40));
+    topics = await filterOnBrandTopics(rawTopics, count);
   } catch (error) {
     return NextResponse.json({
       error: "Failed to fetch topics",
       details: error instanceof Error ? error.message : "Unknown error"
     }, { status: 500 });
+  }
+
+  if (topics.length === 0) {
+    return NextResponse.json({ published: 0, skipped: 0, failed: 0, results: [], note: "No on-brand trending topics found this cycle" });
   }
 
   for (let i = 0; i < topics.length; i++) {

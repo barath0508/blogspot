@@ -14,8 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select("slug,updated_at,published_at")
       .eq("is_published", true)
       .order("published_at", { ascending: false }),
-    supabase.from("categories").select("slug,updated_at"),
-    supabase.from("tags").select("slug,updated_at")
+    supabase.from("categories").select("slug"),
+    supabase.from("tags").select("slug")
   ]);
 
   const postEntries: MetadataRoute.Sitemap = (posts ?? []).map((post: any) => {
