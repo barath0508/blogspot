@@ -35,7 +35,8 @@ function buildCanonicalSearchUrl(searchParams: HomeSearchParams) {
   return `${SITE_URL}${qs ? `/?${qs}` : "/"}`;
 }
 
-export async function generateMetadata({ searchParams }: { searchParams: HomeSearchParams }): Promise<Metadata> {
+export async function generateMetadata({ searchParams: searchParamsPromise }: { searchParams: Promise<HomeSearchParams> }): Promise<Metadata> {
+  const searchParams = await searchParamsPromise;
   const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
   const categoryLabel = searchParams.category ? searchParams.category.replace(/-/g, " ") : undefined;
   const tagLabel = searchParams.tag ? searchParams.tag.replace(/-/g, " ") : undefined;
@@ -59,7 +60,16 @@ export async function generateMetadata({ searchParams }: { searchParams: HomeSea
     description = `Page ${page} of results. ${description}`;
   }
 
-  const canonicalUrl = buildCanonicalSearchUrl(searchParams);
+  // Internal search results and the category/tag query-param views duplicate content that
+  // already has a canonical home at /category/[slug] and /tag/[slug] — keep them out of the
+  // index to avoid duplicate-content and crawl-budget/index-bloat issues from arbitrary query strings.
+  const isDuplicateView = Boolean(searchParams.q || searchParams.category || searchParams.tag);
+  const canonicalUrl = searchParams.category
+    ? `${SITE_URL}/category/${searchParams.category}`
+    : searchParams.tag
+    ? `${SITE_URL}/tag/${searchParams.tag}`
+    : buildCanonicalSearchUrl(searchParams);
+
   const { posts } = await getPublishedPosts({ category: searchParams.category, tag: searchParams.tag, q: searchParams.q, page });
   const latest = posts[0];
 
@@ -69,6 +79,7 @@ export async function generateMetadata({ searchParams }: { searchParams: HomeSea
     url: canonicalUrl,
     keywords: ["technology", "AI", "trendly", "news", "analysis"],
     imageUrl: latest?.cover_image ?? undefined,
+    noindex: isDuplicateView,
   });
 }
 
